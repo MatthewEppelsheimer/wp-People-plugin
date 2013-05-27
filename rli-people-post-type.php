@@ -67,5 +67,5 @@ register_deactivation_hook( __FILE__, 'rli_people_post_type_deactivation' );
 // Wire up actions
 
 add_action( 'add_meta_boxes', array( 'RLI_People_Post_Type', 'create_people_detail_metabox' ) );
-add_action( 'save_post', array( 'RLI_People_Post_Type', 'people_detail_meta_save' ) ;
+add_action( 'save_post', array( 'RLI_People_Post_Type', 'people_detail_meta_save' ) );
 add_action( 'init', array( 'RLI_People_Post_Type', 'register_shortcodes' ) );
