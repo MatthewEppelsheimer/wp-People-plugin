@@ -105,7 +105,7 @@ final class RLI_People_Post_Type {
 	 */
 
 	function register_shortcodes() {
-		add_shortcode( 'rli-people', array( 'RLI_People_Post_Type', 'people_shortcode' );
+		add_shortcode( 'rli-people', array( 'RLI_People_Post_Type', 'people_shortcode' ) );
 	}
 
 	/*
@@ -125,7 +125,7 @@ final class RLI_People_Post_Type {
 		$query_args = array();
 		
 		if( $atts['category'] != '' )
-			$query_args['category']=>$atts['category'];	
+			$query_args['category'] = $atts['category'];	
 
 		$this->list_people( $query_args );
 	}
