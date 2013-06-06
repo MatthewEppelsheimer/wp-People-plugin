@@ -11,23 +11,39 @@
 
 final class RLI_People_Post_Type {
 
+	function setup() {
+		// Wire up actions/filters
+
+		add_filter( 'enter_title_here', 
+			function() {
+				global $post;
+				if ( 'rli-people' == $post->post_type )
+			  	return 'Enter Name';
+			} 
+	 );
+		
+		//add_action( 'init', array( get_class(), 'register_shortcodes' ) );
+		self::register_shortcodes();
+		
+		self::register_people();
+	}
+	
 	/**
-	 * Register custom post type rli_people
+	 * Register custom post type rli-people
 	 *
 	 * @author Matthew Eppelsheimer
 	 * @since 0.2
 	 */
 
-	function register_people() {
-		register_post_type( 'rli_people' , array( 
+	static function register_people() {
+		register_post_type( 'rli-people' , array( 
 			'public' => true,
 			'supports' =>  array(
 				'title',
 				'thumbnail',
-				'editor'
 			),
 			'taxonomies' => array( 'post_tag', 'post_category' ),
-			'query_var' => 'rli_people',
+			'query_var' => 'rli-people',
 			'rewrite' =>  array(
 				'slug' => 'people'
 			),
@@ -44,37 +60,22 @@ final class RLI_People_Post_Type {
 				'not_found' => "No People Found Matching Search",
 				'not_found_in_trash' => "No People Found in Trash",
 				'parent_item_colon' => "Parent Person:"
-			)
+			),
+			
+		'register_meta_box_cb' => array( get_class(), 'create_people_metaboxes')
 		) );
 	}
 
 	/**
-	 * Register meta box for the rli_people post editor screen.
+	 * Register meta box for the rli-people post editor screen.
 	 *
 	 * @uses render_people_detail_metabox()
 	 */
-	public static function create_people_detail_metabox() {
-		add_meta_box( 'people-metabox', 'Person Details', array( 'RLI_People_Post_Type', 'render_people_detail_metabox' ), 'rli_people', 'normal', 'high' );
+	public static function create_people_metaboxes() {
+		// enables users to add more meta boxes
+		do_action( 'rli_people_create_metaboxes');
 	}
-
-	/**
-	 * Render people detail meta box.
-	 * 
-	 * Calls 'rli_people_metabox_render' action.
-	 */
-	public static function render_people_detail_metabox( $post ) {
-		do_action( 'rli_people_metabox_render', $post );
-	}
-
-	/**
-	 * Save People Detail meta box data
-	 *
-	 * Calls 'rli_people_detail_meta_save' action.
-	 */
-	function people_detail_meta_save( $post_id ) {
-		do_action( 'rli_people_detail_meta_save', $post_id );
-	}
-
+	
 	/**
 	 * Utility function to return a WP_Query object with posts of type RLI People
 	 *
@@ -96,6 +97,97 @@ final class RLI_People_Post_Type {
 		return $results;
 	}
 
+	/**
+	 * Returns an array containing all the meta values attached to filter 'rli_people_atts'
+	 *
+	 * Uses filter 'rli_people_atts' to allow users to add their own meta fields
+	 *
+	 * @param $person The post id of the person
+	 * 
+	 * @return An associative array containing all the meta values for the person ; false if $person was invalid
+	 */
+	static function get_person( $person = false ) {
+		// Convert Post object to post id 
+		if ( is_object( $person ) )
+			$person = $person->ID;
+	
+		// check if the post type is correct
+		if ( 'rli-people' != get_post_type( $person ) )
+			return false;
+	
+		// if  id is not given, set it to the_post id
+		if ( false === $person )
+			$person = get_the_ID();
+	
+		$out = array(
+			'name' => get_the_title( $person )
+		);
+	
+		// Users add to this filter to append their own fields to the array
+		return apply_filters( 'rli_people_atts', $out, $person );	
+	}
+
+	static function rli_people_list_item( $post ) {	
+		$person = self::get_person( $post ); ?>
+		<div class='vcard'>
+			<div class='person-photo'>
+				<a href="<?php the_permalink(); ?>" alt="View <?php echo $person['name']; ?>'s full bio"><?php
+				 $size = 'post-thumbnail';
+				 the_post_thumbnail( $size, array( 'class' => "attachment-$size photo" ) ); 
+				 ?></a>
+			</div>
+			<h2><a href="<?php the_permalink(); ?>" alt="View <?php echo $person['name']; ?>'s full bio"><span class='fn'><?php echo $person['name']; ?></span></a></h2>
+			<p class='person-meta'><span class='person-title title'><?php echo $person['title']; ?></span></p>
+			<p class='person-contact'><a href="mailto:<?php echo $person['email']; ?>" class='email'><?php echo $person['email']; ?></a></p>
+			<div class="person-short-bio note"><?php echo $person['brief_bio']; ?></div>
+		</div>
+	<?php
+	}
+	
+	/*
+	 *	rli_people_list() takes query arguments for rli-people and 
+	 *	performs the query, manages a custom loop, and echoes html
+	 *
+	 *	@param $args an array of $args formatted for WP_Query to accept
+	 *	
+	 *	@return true if we output html with people; false if not
+	 */
+	public static function list_people( $args = null, $callback = null ) {
+		global $post;
+
+		// add post type resriction to query
+		if ( null === $args or '' === $args )
+			$args = 'post_type=rli-people';
+		elseif ( is_string( $args ) )
+			$args .= '&post_type=rli-people';
+		elseif ( is_array( $args ) )
+			$args['post_type'] = 'rli-people';
+		else
+			// Invalid input
+			return -1;
+	
+	
+		$people = new WP_Query( $args );
+	
+		if ( $people->have_posts() ) {
+			while ( $people->have_posts() ) {
+				$people->the_post();
+			
+				/* BUILD HTML	*/
+				if ( null === $callback )
+					self::rli_people_list_item( $post );
+				else
+					$callback( $post );
+			}
+			//echo $output;
+			wp_reset_query();
+			return true;
+		}
+	
+		wp_reset_query();
+		return false;
+	}
+
 	/*
 	 *	Shortcode Setup
 	 */
@@ -104,8 +196,8 @@ final class RLI_People_Post_Type {
 	 *	Register shortcode 
 	 */
 
-	function register_shortcodes() {
-		add_shortcode( 'rli-people', array( 'RLI_People_Post_Type', 'people_shortcode' ) );
+	static function register_shortcodes() {
+		add_shortcode( 'rli_people', array( get_class(), 'people_shortcode' ) );
 	}
 
 	/*
@@ -114,12 +206,12 @@ final class RLI_People_Post_Type {
 	 *	Supports the 'category' keyword.
 	 */
 
-	function people_shortcode( $atts ) {
+	static function people_shortcode( $atts ) {
 		$atts = shortcode_atts( 
 			array( 
 				'category' => ''
 			), 
-			$atts 
+			$atts
 		);
 		
 		$query_args = array();
@@ -127,40 +219,7 @@ final class RLI_People_Post_Type {
 		if( $atts['category'] != '' )
 			$query_args['category'] = $atts['category'];	
 
-		$this->list_people( $query_args );
+		self::list_people( $query_args );
 	}
-
-	/*
-	 *	list_people() takes query arguments for rli-people and 
-	 *	performs the query, manages a custom loop, and echoes html
-	 *
-	 *	@param $args an array of $args formatted for WP_Query to accept
-	 *	
-	 *	@return true if we output html with people; false if not
-	 */
-
-	function list_people( $args ) {
-
-		global $post;
-
-		$people = rli_people_query_people( $args );
-		
-		if ( $people->have_posts() ) {
-			$output = "";
-			while ( $people->have_posts() ) {
-				$people->the_post();
-				
-				/*	BUILD HTML	*/
-				/*	@TODO make filterable for theme use	*/
-				
-			}
-			echo $output;
-			wp_reset_query();
-			return true;
-		}
-		
-		wp_reset_query();
-		return false;
-	}
-
 }
+
