@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Rocket Lift People Post Type
-Version: 1.
+Version: 1.0
 Plugin URI: http://rocketlift.com/software/rl-people
 Description: Manage and information on individual people within WordPress
 Author: Rocket Lift via Matthew Eppelsheimer and Kevin Lenihan
