@@ -18,13 +18,11 @@ final class RLI_People_Post_Type {
 			function() {
 				global $post;
 				if ( 'rli-people' == $post->post_type )
-			  	return 'Enter Name';
+			  	return __( 'Enter Name' );
 			} 
 	 );
 		
-		//add_action( 'init', array( get_class(), 'register_shortcodes' ) );
 		self::register_shortcodes();
-		
 		self::register_people();
 	}
 	
@@ -41,6 +39,7 @@ final class RLI_People_Post_Type {
 			'supports' =>  array(
 				'title',
 				'thumbnail',
+				'page-attributes',
 			),
 			'taxonomies' => array( 'post_tag', 'post_category' ),
 			'query_var' => 'rli-people',
@@ -82,7 +81,7 @@ final class RLI_People_Post_Type {
 	 * @author Matthew Eppelsheimer
 	 * @since 0.2
 	 */
-	public static function query_publications( $args ) {
+	public static function query_people( $args ) {
 		$defaults = array(
 			'posts_per_page' => - 1,
 			'order'          => 'ASC',
@@ -90,7 +89,7 @@ final class RLI_People_Post_Type {
 		);
 
 		$query_args = wp_parse_args( $args, $defaults );
-		$query_args['post_type'] = 'publication';
+		$query_args['post_type'] = 'rli-people';
 
 		$results = new WP_Query( $query_args );
 
@@ -134,11 +133,10 @@ final class RLI_People_Post_Type {
 		
 		$output = "<div class='vcard'>
 			<div class='person-photo'>
-			<a href=\"" . get_permalink() . "\" alt=\"View " . $person['name'] . "'s full bio\"";
+			<a href=\"" . get_permalink() . "\" alt=\"View " . $person['name'] . "'s full bio\">";
 				 
-		$output .= get_the_post_thumbnail( $size, array( 'class' => "attachment-$size photo" ) ); 
-		$output .= '</a>
-			</div>
+		$output .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) ) . "</a> ";
+		$output .= '</div>
 			<h2><a href="' . get_permalink() . '" alt="View ' . $person['name']  . "\'s full bio\"><span class='fn'> " . $person['name'] . "</span></a></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . '</a></p>
@@ -157,20 +155,8 @@ final class RLI_People_Post_Type {
 	 */
 	public static function list_people( $args = null, $callback = null ) {
 		global $post;
-
-		// add post type resriction to query
-		if ( null === $args or '' === $args )
-			$args = 'post_type=rli-people';
-		elseif ( is_string( $args ) )
-			$args .= '&post_type=rli-people';
-		elseif ( is_array( $args ) )
-			$args['post_type'] = 'rli-people';
-		else
-			// Invalid input
-			return -1;
-	
-	
-		$people = new WP_Query( $args );
+		
+		$people = self::query_people( $args );
 	
 		if ( $people->have_posts() ) {
 			$out = '';

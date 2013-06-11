@@ -129,7 +129,7 @@ EOT;
 }
 
 /**
- * Handles the saving of a 
+ * Handles the saving of a meta field
  */
 if ( ! function_exists('rli_save_meta') ) {
 	function rli_save_meta( $post_id, $post_type, $nonce_name, $field_id ) {
