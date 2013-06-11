@@ -45,7 +45,7 @@ add_filter( 'rli_people_atts',
 		$arr['title'] = get_post_meta( $id, '_title', true );
 		return $arr;
 	},
-	10,
+	2,
 	2
 );
 
@@ -89,7 +89,7 @@ add_filter( 'rli_people_atts',
 		$arr['email'] = get_post_meta( $id, '_email', true );
 		return $arr;
 	},
-	10,
+	2,
 	2
 );
 
@@ -130,7 +130,7 @@ add_filter( 'rli_people_atts',
 		$arr['full_bio'] = get_post_meta( $id, '_full-bio', true );
 		return $arr;
 	},
-	10,
+	2,
 	2
 );
 
@@ -170,7 +170,7 @@ add_filter( 'rli_people_atts',
 		$arr['brief_bio'] = get_post_meta( $id, '_brief', true );
 		return $arr;
 	},
-	10,
+	2,
 	2
 );
 

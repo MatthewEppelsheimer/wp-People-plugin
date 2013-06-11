@@ -127,21 +127,24 @@ final class RLI_People_Post_Type {
 		return apply_filters( 'rli_people_atts', $out, $person );	
 	}
 
-	static function rli_people_list_item( $post ) {	
-		$person = self::get_person( $post ); ?>
-		<div class='vcard'>
+	static function list_item( $post ) {	
+		$person = self::get_person( $post );
+		
+		$size = 'post-thumbnail';
+		
+		$output = "<div class='vcard'>
 			<div class='person-photo'>
-				<a href="<?php the_permalink(); ?>" alt="View <?php echo $person['name']; ?>'s full bio"><?php
-				 $size = 'post-thumbnail';
-				 the_post_thumbnail( $size, array( 'class' => "attachment-$size photo" ) ); 
-				 ?></a>
+			<a href=\"" . get_permalink() . "\" alt=\"View " . $person['name'] . "'s full bio\"";
+				 
+		$output .= get_the_post_thumbnail( $size, array( 'class' => "attachment-$size photo" ) ); 
+		$output .= '</a>
 			</div>
-			<h2><a href="<?php the_permalink(); ?>" alt="View <?php echo $person['name']; ?>'s full bio"><span class='fn'><?php echo $person['name']; ?></span></a></h2>
-			<p class='person-meta'><span class='person-title title'><?php echo $person['title']; ?></span></p>
-			<p class='person-contact'><a href="mailto:<?php echo $person['email']; ?>" class='email'><?php echo $person['email']; ?></a></p>
-			<div class="person-short-bio note"><?php echo $person['brief_bio']; ?></div>
-		</div>
-	<?php
+			<h2><a href="' . get_permalink() . '" alt="View ' . $person['name']  . "\'s full bio\"><span class='fn'> " . $person['name'] . "</span></a></h2>
+			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
+			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . '</a></p>
+			<div class="person-short-bio note">' . $person['brief_bio'] . '</div>
+		</div>';
+	return $output;
 	}
 	
 	/*
@@ -170,18 +173,23 @@ final class RLI_People_Post_Type {
 		$people = new WP_Query( $args );
 	
 		if ( $people->have_posts() ) {
+			$out = '';
 			while ( $people->have_posts() ) {
 				$people->the_post();
 			
-				/* BUILD HTML	*/
-				if ( null === $callback )
-					self::rli_people_list_item( $post );
+				// BUILD HTML
+				// Give Priority to the $callback variable, 
+				// then the action hook,
+				// then the default function
+				if ( null !== $callback )
+					$out .= $callback( $post );
+				elseif ( has_filter('rli_people_item_callback' ) )
+					$out .= apply_filters( 'rli_people_item_callback', '', $post );
 				else
-					$callback( $post );
+					$out .= self::list_item( $post );
 			}
-			//echo $output;
 			wp_reset_query();
-			return true;
+			return $out;
 		}
 	
 		wp_reset_query();
@@ -217,9 +225,8 @@ final class RLI_People_Post_Type {
 		$query_args = array();
 		
 		if( $atts['category'] != '' )
-			$query_args['category'] = $atts['category'];	
-
-		self::list_people( $query_args );
+			$query_args['category'] = $atts['category'];
+		return self::list_people( $query_args );
 	}
 }
 
