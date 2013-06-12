@@ -93,47 +93,6 @@ add_filter( 'rli_people_atts',
 	2
 );
 
-/******************* Full Bio Field *********************/
-
-// Add Full bio meta box
-add_action( 'rli_people_create_metaboxes', function() {
-	add_meta_box( 'full-bio', __( 'Full Bio' ), 'render_people_full_bio_metabox', 'rli-people', 'normal', 'high' );
-} );
-
-/**
- * Render people full bio meta box.
- * 
- * Calls 'rli_people_full_bio_metabox_render' action.
- */
-if ( ! function_exists('render_people_full_bio_metabox') ) {
-	function render_people_full_bio_metabox( $post ) {
-		add_action( 'rli_people_full_bio_metabox_render' , 
-			function( $post ) {
-				wp_nonce_field( 'rli-people', 'rli_people_full_bio_nonce' );
-				rli_people_metabox_basic_tinymce( $post, 'full-bio', '250px' );
-			}
-		);
-		do_action( 'rli_people_full_bio_metabox_render', $post );
-	}
-}
-
-// save action
-add_action('save_post',
-	function( $post_id ) {
-		rli_save_meta( $post_id, 'rli-people', 'rli_people_full_bio_nonce', 'full-bio' );
-	}
-);
-
-// Add rli_people_person hook
-add_filter( 'rli_people_atts', 
-	function( $arr, $id ) {
-		$arr['full_bio'] = get_post_meta( $id, '_full-bio', true );
-		return $arr;
-	},
-	2,
-	2
-);
-
 /****************** Brief Bio Field *********************/
 
 // Add Brief Bio meta box

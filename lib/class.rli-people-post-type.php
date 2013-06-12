@@ -39,6 +39,7 @@ final class RLI_People_Post_Type {
 			'supports' =>  array(
 				'title',
 				'thumbnail',
+				'editor',
 				'page-attributes',
 			),
 			'taxonomies' => array( 'post_tag', 'post_category' ),
@@ -119,7 +120,8 @@ final class RLI_People_Post_Type {
 			$person = get_the_ID();
 	
 		$out = array(
-			'name' => get_the_title( $person )
+			'name' => get_the_title( $person ),
+			'full_bio' => get_the_content( $person ),
 		);
 	
 		// Users add to this filter to append their own fields to the array
