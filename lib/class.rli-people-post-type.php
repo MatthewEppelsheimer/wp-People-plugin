@@ -48,18 +48,18 @@ final class RLI_People_Post_Type {
 				'slug' => 'people'
 			),
 			'labels' => array(
-				'name' => "People",
-				'all_items' => "All People",
-				'singular_name' => "People",
-				'add_new' => "Add a New Person",
-				'add_new_item' => "Add a New Person",
-				'edit_item' => "Edit Person",
-				'new_item' => "Add New Person",
-				'view_item' => "View Person",
-				'search_items' => "Search People",
-				'not_found' => "No People Found Matching Search",
-				'not_found_in_trash' => "No People Found in Trash",
-				'parent_item_colon' => "Parent Person:"
+				'name' => __( 'People', 'rli_people' ),
+				'all_items' => __( 'All People', 'rli_people' ),
+				'singular_name' => __( 'People', 'rli_people' ),
+				'add_new' => __( 'Add a New Person', 'rli_people' ),
+				'add_new_item' => __( 'Add a New Person', 'rli_people' ),
+				'edit_item' => __( 'Edit Person', 'rli_people' ),
+				'new_item' => __( 'Add New Person', 'rli_people' ),
+				'view_item' => __( 'View Person', 'rli_people' ),
+				'search_items' => __( 'Search People', 'rli_people' ),
+				'not_found' => __( 'No People Found Matching Search', 'rli_people' ),
+				'not_found_in_trash' => __( 'No People Found in Trash', 'rli_people' ),
+				'parent_item_colon' => __( 'Parent Person:', 'rli_people' )
 			),
 			
 		'register_meta_box_cb' => array( get_class(), 'create_people_metaboxes')
@@ -119,27 +119,34 @@ final class RLI_People_Post_Type {
 		if ( false === $person )
 			$person = get_the_ID();
 	
-		$out = array(
+		$fields = array(
 			'name' => get_the_title( $person ),
 			'full_bio' => get_the_content( $person ),
 		);
 	
 		// Users add to this filter to append their own fields to the array
-		return apply_filters( 'rli_people_atts', $out, $person );	
+		$fields = apply_filters( 'rli_people_atts', $fields, $person );	
+		
+		foreach( $fields as $key => $field ) {
+			$out[$key] = wp_kses( $field, wp_kses_allowed_html( 'post' ) );
+		}
+		return $out;
 	}
 
-	static function list_item( $post ) {	
+	static function list_item( $post ) {
+		// get person info
 		$person = self::get_person( $post );
 		
 		$size = 'post-thumbnail';
+		$bio_text = sprintf( __( 'View %s\'s full bio', 'rli_people' ), $person['name'] ) ;
 		
 		$output = "<div class='vcard'>
 			<div class='person-photo'>
-			<a href=\"" . get_permalink() . "\" alt=\"View " . $person['name'] . "'s full bio\">";
+			<a href=\"" . get_permalink() . "\" alt=\"$bio_text\">";
 				 
 		$output .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) ) . "</a> ";
 		$output .= '</div>
-			<h2><a href="' . get_permalink() . '" alt="View ' . $person['name']  . "\'s full bio\"><span class='fn'> " . $person['name'] . "</span></a></h2>
+			<h2><a href="' . get_permalink() . "\" alt=$bio_text><span class='fn'> " . $person['name'] . "</span></a></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . '</a></p>
 			<div class="person-short-bio note">' . $person['brief_bio'] . '</div>
@@ -166,10 +173,11 @@ final class RLI_People_Post_Type {
 				$people->the_post();
 			
 				// BUILD HTML
-				// Give Priority to the $callback variable, 
+				// Give Priority to:
+				// $callback variable, 
 				// then the action hook,
 				// then the default function
-				if ( null !== $callback )
+				if ( $callback )
 					$out .= $callback( $post );
 				elseif ( has_filter('rli_people_item_callback' ) )
 					$out .= apply_filters( 'rli_people_item_callback', '', $post );
@@ -206,7 +214,7 @@ final class RLI_People_Post_Type {
 		$atts = shortcode_atts( 
 			array( 
 				'category' => ''
-			), 
+			),
 			$atts
 		);
 		

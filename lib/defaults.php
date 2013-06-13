@@ -9,7 +9,7 @@ define( 'RLI_PEOPLE_DEFAULTS_FILE', __FILE__ );
 
 // Add title meta box
 add_action( 'rli_people_create_metaboxes', function() { 
-	add_meta_box( 'title', __( 'Title' ), 'render_people_title_metabox', 'rli-people', 'normal', 'high' );
+	add_meta_box( 'title', __( 'Title', 'rli_people' ), 'render_people_title_metabox', 'rli-people', 'normal', 'high' );
 } );
 
 /**
@@ -53,7 +53,7 @@ add_filter( 'rli_people_atts',
 
 // Add Email meta box
 add_action( 'rli_people_create_metaboxes', function() {
-	add_meta_box( 'email', __( 'Email' ), 'render_people_email_metabox', 'rli-people', 'normal', 'high' );
+	add_meta_box( 'email', __( 'Email', 'rli_people' ), 'render_people_email_metabox', 'rli-people', 'normal', 'high' );
 } );
 
 /**
@@ -97,7 +97,7 @@ add_filter( 'rli_people_atts',
 
 // Add Brief Bio meta box
 add_action( 'rli_people_create_metaboxes', function() {
-	add_meta_box( 'brief', __( 'Brief Bio' ), 'render_people_brief_metabox', 'rli-people', 'normal', 'high' );
+	add_meta_box( 'brief', __( 'Brief Bio', 'rli_people' ), 'render_people_brief_metabox', 'rli-people', 'normal', 'high' );
 } );
 
 /**
