@@ -14,13 +14,14 @@ final class RLI_People_Post_Type {
 	function setup() {
 		// Wire up actions/filters
 
+		// Change 'enter title here' label in Person editor screen
 		add_filter( 'enter_title_here', 
 			function() {
 				global $post;
 				if ( 'rli-people' == $post->post_type )
 			  	return __( 'Enter Name' );
 			} 
-	 );
+		);
 		
 		self::register_shortcodes();
 		self::register_people();
@@ -201,7 +202,7 @@ final class RLI_People_Post_Type {
 	 */
 
 	static function register_shortcodes() {
-		add_shortcode( 'rli_people', array( get_class(), 'people_shortcode' ) );
+		add_shortcode( 'people', array( get_class(), 'people_shortcode' ) );
 	}
 
 	/*
