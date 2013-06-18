@@ -13,6 +13,10 @@ add_action( 'people_create_metaboxes', function() {
 /**
  * Render people title meta box.
  * 
+ * Creates a lambda function, for rendering the metabox, and adds it to the 'people_title_metabox_render' action.
+ * This action is useful for adding additional fields to this metabox
+ * Note: If you add a field to this metabox, remember to also add a filter to 'save_post' and 'people_atts'.
+ *
  * Calls 'people_title_metabox_render' action.
  */
 if ( ! function_exists('render_people_title_metabox') ) {
@@ -57,6 +61,10 @@ add_action( 'people_create_metaboxes', function() {
 /**
  * Render people email meta box.
  * 
+ * Creates a lambda function, for rendering the metabox, and adds it to the 'people_email_metabox_render' action.
+ * This action is useful for adding additional fields to this metabox
+ * Note: If you add a field to this metabox, remember to also add a filter to the save_post.
+ *
  * Calls 'people_email_metabox_render' action.
  */
 if ( ! function_exists('render_people_email_metabox') ) {
@@ -77,6 +85,8 @@ if ( ! function_exists('render_people_email_metabox') ) {
 //save_action
 add_action('save_post',
 	function( $post_id ) {
+		if ( ! is_email( get_post_meta( $post->ID, '_email', true ) ) )
+			return $post_id;
 		people_save_meta( $post_id, 'people', 'people_email_nonce', 'email' );
 	}
 );

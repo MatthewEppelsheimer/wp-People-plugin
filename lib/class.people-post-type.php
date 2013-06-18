@@ -45,7 +45,6 @@ final class People_Post_Type {
 				'page-attributes',
 			),
 			'taxonomies' => array( 'post_tag', 'post_category' ),
-			'query_var' => 'people',
 			'rewrite' =>  array(
 				'slug' => 'people'
 			),
@@ -224,7 +223,7 @@ final class People_Post_Type {
 		
 		$query_args = array();
 		
-		if( $atts['category'] != '' )
+		if( $atts['category'] )
 			$query_args['category'] = $atts['category'];
 		return self::list_people( $query_args );
 	}
