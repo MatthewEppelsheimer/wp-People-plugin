@@ -84,8 +84,8 @@ if ( ! function_exists( 'people_post_type_deactivation' ) ) {
  *	@return true if we output html with people; false if not
  */
 
-if ( ! function_exists( 'people_list' ) ) {
-	function people_list( $args = null, $callback = null ) {
+if ( ! function_exists( 'people_list_people' ) ) {
+	function people_list_people( $args = null, $callback = null ) {
 		People_Post_Type::list_people( $args, $callback );
 	}
 }
@@ -99,9 +99,21 @@ if ( ! function_exists( 'people_list' ) ) {
  * 
  * @return An associative array containing all the meta values for the person ; false if $person was invalid
  */
-if ( ! function_exists( 'people_person' ) ) {
-	function people_person() {
+if ( ! function_exists( 'people_get_person' ) ) {
+	function people_get_person() {
 		return People_Post_Type::get_person();
+	}
+}
+
+/**
+ * Returns the html code for rendering a single person.
+ * Must be called inside the loop to work. 
+ *
+ * To change how a person is rendered, add a filter to 'people_single_callback'
+ */
+if ( ! function_exists( 'people_render_single_person' ) ) {
+	function people_render_single_person() {
+		return People_Post_Type::render_single_person();
 	}
 }
 

@@ -126,7 +126,10 @@ final class People_Post_Type {
 		$fields = apply_filters( 'people_atts', $fields, $person );	
 		
 		foreach( $fields as $key => $field ) {
-			$out[$key] = wp_kses( esc_attr( $field ), wp_kses_allowed_html( 'post' ) );
+			if ( 'full_bio' !== $key )
+				// if it is the full bio we don't want to escape the autop tags
+				$field = esc_attr( $field );
+			$out[$key] = wp_kses( $field, wp_kses_allowed_html( 'post' ) );
 		}
 		return $out;
 	}
@@ -195,6 +198,36 @@ final class People_Post_Type {
 		return false;
 	}
 
+	/**
+	 *
+	 * Returns the html code for a single person. Will use a default format unless something has been added to the action: 'people_single_callback'
+	 *
+	 * NOTE: Must be called inside the loop.
+	 */
+	public static function render_single_person() {
+		global $post;
+		
+		$person = self::get_person(); 
+		
+		// If something has been hooked to this action, use that instead of the default below
+		if ( has_filter( 'people_single_callback' ) ){
+			return apply_filters( 'people_single_callback', '' );
+		}
+		
+		$out = "<div class='vcard'>
+			<div class='person-photo'>";
+				
+		$size = 'post-thumbnail';
+		$out .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) ) . "</a> ";
+		$out .= "</div>
+			<h2><span class='fn'>" . $person['name'] . "</span></h2>
+			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
+			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . "</a></p>
+		</div>
+		<div class='person-long-bio'>" . $person['full_bio'] . "</div>";
+		return $out;
+	}
+ 
 	/*
 	 *	Shortcode Setup
 	 */
