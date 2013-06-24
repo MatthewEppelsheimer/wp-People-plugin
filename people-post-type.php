@@ -120,6 +120,27 @@ if ( ! function_exists( 'people_render_single_person' ) ) {
 /*************** Utility Functions *********************/
 
 /**
+ * Creates a tinymce textarea 
+ */
+if ( ! function_exists('people_metabox_basic_tinymce') ) {
+	function people_metabox_basic_tinymce( $post, $field_id, $height ){
+		$text = esc_attr( get_post_meta( $post->ID, '_' . $field_id, true ) );
+		echo <<<EOT
+  	<script type="text/javascript">
+		jQuery(document).ready(function() {
+		  jQuery("#{$field_id}").addClass("mceEditor");
+			if ( typeof( tinyMCE ) == "object" &&
+				typeof( tinyMCE.execCommand ) == "function" ) {
+				tinyMCE.execCommand("mceAddControl", false, "tinymce");
+			}
+		});
+		</script>
+			<textarea class="widefat" id="{$field_id}" name="{$field_id}" style="width: 100%; height:{$height};" >{$text}</textarea>
+EOT;
+	}
+}
+
+/**
  * Handles the saving of a meta field
  */
 if ( ! function_exists( 'people_save_meta' ) ) {
