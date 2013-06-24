@@ -207,18 +207,18 @@ final class People_Post_Type {
 	public static function render_single_person() {
 		global $post;
 		
-		$person = self::get_person(); 
+		$person = self::get_person();
 		
 		// If something has been hooked to this action, use that instead of the default below
 		if ( has_filter( 'people_single_callback' ) ){
-			return apply_filters( 'people_single_callback', '' );
+			return apply_filters( 'people_single_callback', '', $person );
 		}
 		
 		$out = "<div class='vcard'>
 			<div class='person-photo'>";
 				
 		$size = 'post-thumbnail';
-		$out .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) ) . "</a> ";
+		$out .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) );
 		$out .= "</div>
 			<h2><span class='fn'>" . $person['name'] . "</span></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
