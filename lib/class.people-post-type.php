@@ -41,6 +41,7 @@ final class People_Post_Type {
 				'title',
 				'thumbnail',
 				'editor',
+				'excerpt',
 				'page-attributes',
 			),
 			'taxonomies' => array( 'post_tag', 'post_category' ),
@@ -118,13 +119,14 @@ final class People_Post_Type {
 			// get_the_content() does not apply the filters the_content() does,
 			// so manually add the filters
 			'full_bio' => apply_filters( 'the_content', get_the_content() ),
+			'brief_bio' => get_the_excerpt(),
 		);
 	
 		// Users add to this filter to append their own fields to the array
 		$fields = apply_filters( 'people_atts', $fields, $person );
 		
 		foreach( $fields as $key => $field ) {
-			if ( 'full_bio' !== $key )
+			if ( 'full_bio' !== $key and 'brief_bio' !== $key )
 				// if it is the full bio we don't want to escape the autop tags
 				$field = esc_attr( $field );
 			$out[$key] = wp_kses( $field, wp_kses_allowed_html( 'post' ) );

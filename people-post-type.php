@@ -119,26 +119,29 @@ if ( ! function_exists( 'people_render_single_person' ) ) {
 
 /*************** Utility Functions *********************/
 
-/**
- * Creates a tinymce textarea 
+/*
+ * Extend tinymce to the excerpt editor
+ *
+ * @kudos http://haet.at/add-tinymce-editor-wordpress-excerpt-field/
  */
-if ( ! function_exists('people_metabox_basic_tinymce') ) {
-	function people_metabox_basic_tinymce( $post, $field_id, $height ){
-		$text = esc_attr( get_post_meta( $post->ID, '_' . $field_id, true ) );
-		echo <<<EOT
-  	<script type="text/javascript">
-		jQuery(document).ready(function() {
-		  jQuery("#{$field_id}").addClass("mceEditor");
-			if ( typeof( tinyMCE ) == "object" &&
-				typeof( tinyMCE.execCommand ) == "function" ) {
-				tinyMCE.execCommand("mceAddControl", false, "tinymce");
-			}
-		});
-		</script>
-			<textarea class="widefat" id="{$field_id}" name="{$field_id}" style="width: 100%; height:{$height};" >{$text}</textarea>
-EOT;
-	}
+function tinymce_excerpt_js(){?>
+	<script type="text/javascript">// <![CDATA[
+	    jQuery(document).ready( tinymce_excerpt );
+	    function tinymce_excerpt() {
+	        jQuery("#excerpt").addClass("mceEditor");
+	        tinyMCE.execCommand("mceAddControl", false, "excerpt");
+	        tinyMCE.onAddEditor.add(function(mgr,ed) {
+	            if(ed.id=="excerpt"){
+	                ed.settings.theme_advanced_buttons2 ="";
+	                ed.settings.theme_advanced_buttons1 = "bold,italic,underline,seperator,justifyleft,justifycenter,justifyright,separator,link,unlink,seperator,pastetext,pasteword,removeformat,seperator,undo,redo,seperator,spellchecker,";
+	            }
+	        });
+	    }
+	// ]]></script>
+<?php
 }
+add_action( 'admin_head-post.php', 'tinymce_excerpt_js');
+add_action( 'admin_head-post-new.php', 'tinymce_excerpt_js');
 
 /**
  * Handles the saving of a meta field
