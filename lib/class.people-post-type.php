@@ -155,7 +155,7 @@ final class People_Post_Type {
 			<h2><a href="' . get_permalink() . "\" alt=$bio_text><span class='fn'> " . $person['name'] . "</span></a></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . '</a></p>
-			<div class="person-short-bio note">' . $person['brief_bio'] . '</div>
+			<div class="person-short-bio note">' . apply_filters( 'the_excerpt', $person['brief_bio'] ) . '</div>
 		</div>';
 	return $output;
 	}
