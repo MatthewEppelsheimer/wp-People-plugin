@@ -37,7 +37,8 @@ if ( ! function_exists('render_people_title_metabox') ) {
 // Add save action
 add_action('save_post',
 	function( $post_id ) {
-		people_save_meta( $post_id, 'people', 'people_title_nonce', 'title' );
+		if ( 'people' == get_post_type( $post_id ) )
+			people_save_meta( $post_id, 'people', 'people_title_nonce', 'title' );
 	}
 );
 
@@ -86,6 +87,8 @@ if ( ! function_exists('render_people_email_metabox') ) {
 add_action('save_post',
 	function( $post_id ) {
 		// Validate if sting is and email or not set
+		if ( 'people' != get_post_type( $post_id ) )
+			return $post_id;
 		if ( ! is_email( $_POST['email'] ) and $_POST['email'] )
 			return $post_id;
 		people_save_meta( $post_id, 'people', 'people_email_nonce', 'email' );
