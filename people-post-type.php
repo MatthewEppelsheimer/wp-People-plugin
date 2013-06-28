@@ -148,23 +148,24 @@ add_action( 'admin_head-post-new.php', 'tinymce_excerpt_js');
  */
 if ( ! function_exists( 'people_save_meta' ) ) {
 	function people_save_meta( $post_id, $post_type, $nonce_name, $field_id ) {
+		
+		// Verify if this is an auto save routine. If it is our form has not been submitted, so we dont want
+		// to do anything
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+			return $post_id;
+		
+		if ( ! current_user_can( 'edit_page', $post_id ) || ! current_user_can( 'edit_post', $post_id ))
+			return $post_id;
+		
+		// Check permissions to edit pages and/or posts
+		if (  ! isset( $_POST['post_type'] ) or $post_type != $_POST['post_type'] )
+			return $post_id;
+		
 		// Verify this came from the our screen and with proper authorization,
 		// because save_post can be triggered at other times
 		if ( ! wp_verify_nonce( $_POST[$nonce_name], 'people' )) {
 			return $post_id;
 		}
-
-		// Verify if this is an auto save routine. If it is our form has not been submitted, so we dont want
-		// to do anything
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
-			return $post_id;
-
-		// Check permissions to edit pages and/or posts
-		if ( $post_type != $_POST['post_type'] )
-			return $post_id;
-	
-		if ( ! current_user_can( 'edit_page', $post_id ) || ! current_user_can( 'edit_post', $post_id ))
-			return $post_id;
 
 		// save data in INVISIBLE custom field (note the "_" prefixing the custom fields' name
 		update_post_meta( $post_id, '_' . $field_id, $_POST[$field_id] ); 
