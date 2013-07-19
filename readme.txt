@@ -7,7 +7,8 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Creates a post type for people and provides useful filters to easily adapt the plugin to suite your needs.
-    
+
+   
 == Description ==
 
 People creates a post type that is designed to have the standard fields useful for most users, but also allows advanced users to easily adapt the plugin to suite their needs.
@@ -21,6 +22,9 @@ By default this plugin supports these fields for a Person:
 * Brief Bio (Uses WordPress's existing excerpt field)
 * Featured Image (Uses WordPress's existing functionality for thumbnails)
 * Order: Number used to sort the people (`0` = High Priority, `10` = Low Priority)
+
+
+=== Available Functions ===
 
 The following functions are made explicitly for the users to ... um ... use:
 
@@ -38,14 +42,17 @@ Next we have a list of filter and action hooks that allow users to modify this p
 * `people_title_metabox_render`: used to add fields to the title metabox
 * `people_email_metabox_render`: used to add fields to the email metabox
 
-Available Shortcodes
+
+=== Available Shortcodes ===
 
 * `[people]` : renders the list of people
+
 
 == Installation ==
 
 1. Upload `people-post-type/` to the `/wp-content/plugins/` directory
 2. Activate the plugin, 'People', through the 'Plugins' menu in WordPress
+
 
 == Adding your own Metabox ==
 
