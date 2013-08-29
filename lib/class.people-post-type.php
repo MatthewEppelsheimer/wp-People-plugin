@@ -171,6 +171,9 @@ final class People_Post_Type {
 	public static function list_people( $args = null, $callback = null ) {
 		global $post;
 		
+		if ( empty( $args['orderby'] ) )
+			$args['orderby'] = 'menu_order';
+		
 		$people = self::query_people( $args );
 	
 		if ( $people->have_posts() ) {
@@ -249,7 +252,8 @@ final class People_Post_Type {
 	static function people_shortcode( $atts ) {
 		$atts = shortcode_atts( 
 			array( 
-				'category' => ''
+				'category' => '',
+				'orderby'  => ''
 			),
 			$atts
 		);
@@ -258,6 +262,8 @@ final class People_Post_Type {
 		
 		if( $atts['category'] )
 			$query_args['category'] = $atts['category'];
+		if( $atts['orderby'] )
+			$query_args['orderby'] = $atts['orderby'];
 		return self::list_people( $query_args );
 	}
 }
