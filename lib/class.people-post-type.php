@@ -119,7 +119,7 @@ final class People_Post_Type {
 			// get_the_content() does not apply the filters the_content() does,
 			// so manually add the filters
 			'full_bio' => apply_filters( 'the_content', get_the_content() ),
-			'brief_bio' => get_the_excerpt(),
+			'brief_bio' => apply_filters( 'the_excerpt', get_the_excerpt() ),
 		);
 	
 		// Users add to this filter to append their own fields to the array
@@ -145,17 +145,17 @@ final class People_Post_Type {
 		
 		$bio_text = sprintf( __( 'View %s\'s full bio', 'people' ), $person['name'] ) ;
 		
-		$output = "<div class='vcard'>
+		$output = "<div class='person'>
 			<div class='person-photo'>
 			<a href=\"" . get_permalink() . "\" alt=\"$bio_text\">";
 				
 		$size = 'post-thumbnail';
 		$output .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) ) . "</a> ";
 		$output .= '</div>
-			<h2><a href="' . get_permalink() . "\" alt=$bio_text><span class='fn'> " . $person['name'] . "</span></a></h2>
+			<h2><a href="' . get_permalink() . "\" alt=$bio_text><span class='person-name'> " . $person['name'] . "</span></a></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . '</a></p>
-			<div class="person-short-bio note">' . apply_filters( 'the_excerpt', $person['brief_bio'] ) . '</div>
+			<div class="person-short-bio note">' . $person['brief_bio'] . '</div>
 		</div>';
 	return $output;
 	}
@@ -217,13 +217,13 @@ final class People_Post_Type {
 			return apply_filters( 'people_single_callback', '', $person );
 		}
 		
-		$out = "<div class='vcard'>
+		$out = "<div class='person'>
 			<div class='person-photo'>";
 				
 		$size = 'post-thumbnail';
 		$out .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) );
 		$out .= "</div>
-			<h2><span class='fn'>" . $person['name'] . "</span></h2>
+			<h2><span class='person-name'>" . $person['name'] . "</span></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . "</a></p>
 		</div>

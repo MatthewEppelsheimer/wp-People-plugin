@@ -86,10 +86,11 @@ if ( ! function_exists('render_people_email_metabox') ) {
 //save_action
 add_action('save_post',
 	function( $post_id ) {
-		// Validate if sting is and email or not set
+		// Only run on people posts
 		if ( 'people' != get_post_type( $post_id ) )
 			return $post_id;
-		if ( ! is_email( $_POST['email'] ) and $_POST['email'] )
+		// Verify that the input is an actual email address
+		if ( ! ( isset(  $_POST['email'] ) and is_email( $_POST['email'] ) ) )
 			return $post_id;
 		people_save_meta( $post_id, 'people', 'people_email_nonce', 'email' );
 	}
