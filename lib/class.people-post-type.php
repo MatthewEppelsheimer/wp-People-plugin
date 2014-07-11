@@ -9,19 +9,18 @@
  * @author Matthew Eppelsheimer
  */
 
-final class People_Post_Type {
+class People_Post_Type {
 
 	function setup() {
 		// Wire up actions/filters
 
 		// Change 'enter title here' label in Person editor screen
-		add_filter( 'enter_title_here', 
-			function() {
+		add_filter( 'enter_title_here', 'people_title_name' );
+		function people_title_name() {
 				global $post;
 				if ( 'people' == $post->post_type )
 			  	return __( 'Enter Name', 'people' );
-			} 
-		);
+			}
 		
 		self::register_shortcodes();
 		self::register_people();

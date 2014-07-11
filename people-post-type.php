@@ -4,7 +4,7 @@ Plugin Name: People
 Version: 1.0
 Plugin URI: http://rocketlift.com/software/people
 Description: Manage and information on individual people within WordPress
-Author: Rocket Lift via Matthew Eppelsheimer and Kevin Lenihan
+Author: RocketLift
 Author URI: http://rocketlift.com/
 License: GPL 2
 */
@@ -147,30 +147,86 @@ add_action( 'admin_head-post-new.php', 'tinymce_excerpt_js');
  * Handles the saving of a meta field
  */
 if ( ! function_exists( 'people_save_meta' ) ) {
-	function people_save_meta( $post_id, $post_type, $nonce_name, $field_id ) {
+	function people_save_meta( $post_id, $post_type, $field_id ) {
 		
 		// Verify if this is an auto save routine. If it is our form has not been submitted, so we dont want
 		// to do anything
-		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
-			return $post_id;
-		
-		if ( ! current_user_can( 'edit_page', $post_id ) || ! current_user_can( 'edit_post', $post_id ))
-			return $post_id;
-		
-		// Check permissions to edit pages and/or posts
-		if (  ! isset( $_POST['post_type'] ) or $post_type != $_POST['post_type'] )
-			return $post_id;
-		
-		// Verify this came from the our screen and with proper authorization,
-		// because save_post can be triggered at other times
-		if ( ! wp_verify_nonce( $_POST[$nonce_name], 'people' )) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return $post_id;
 		}
-
+		// Check permissions to edit pages and/or posts		
+		if ( ! current_user_can( 'edit_page', $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
+			return $post_id;
+		}
 		// save data in INVISIBLE custom field (note the "_" prefixing the custom fields' name
 		update_post_meta( $post_id, '_' . $field_id, $_POST[$field_id] ); 
 	}
 }
+
+function people_details_box() {
+	add_meta_box( 'details', __( 'Person Details', 'people' ), 'render_people_details_metabox', 'people', 'normal', 'high' );
+}
+add_action( 'people_create_metaboxes', 'people_details_box' );
+
+function render_people_details_metabox( $post ) {
+	wp_nonce_field( 'people', 'people_details_nonce' ); 
+	do_action( 'people_details_metabox', $post );
+}
+
+function people_verify_detail_nonce( $post_id ) {
+	// Verify this came from the our screen and with proper authorization,
+	// because save_post can be triggered at other times
+	if ( ! wp_verify_nonce( $_POST['people_details_nonce'], 'people' )) {
+		return $post_id;
+	}
+	
+	// only call action if save is for the people post type
+	if ( 'people' != get_post_type( $post_id ) ) {
+		return $post_id;
+	}
+	
+	// if verified then save the subfields
+	do_action( 'people_save_details', $post_id );
+}
+add_action( 'save_post', 'people_verify_detail_nonce' );
+
+function people_user_link() {
+	add_meta_box( 'people_pu_metabox', __('User Account', 'people' ), 'people_user_box', 'people', 'side' );
+}
+add_action( 'add_meta_boxes', 'people_user_link' );
+
+function people_user_box( $post ){
+	wp_nonce_field( 'people', 'people_user_nonce' );
+	
+	$user_id = get_post_meta( $post->ID, '_user', true );
+	wp_dropdown_users( array(
+		'show_option_none' => 'Not a User',
+		'selected' => $user_id
+	) );
+}
+
+// Add save action
+
+function people_save_user( $post_id ) {
+
+	// manually verify this nonce
+	if ( ! wp_verify_nonce( $_POST['people_user_nonce'], 'people' )) {
+		return $post_id;
+	}
+	
+	if ( 'people' == get_post_type( $post_id ) ) { 
+		people_save_meta( $post_id, 'people', 'user' );
+	}
+}
+add_action('save_post', 'people_save_user' );
+
+// Add people_atts hook
+function people_user_atts_hook( $arr, $id ) {
+	$arr['user'] = get_post_meta( $id, '_user', true );
+	return $arr;
+}
+add_filter( 'people_atts', 'people_user_atts_hook', 2, 2 );
+
 // Add default fields
 require_once( 'lib/defaults.php' );
 

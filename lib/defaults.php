@@ -1,108 +1,64 @@
 <?php
 //This sets the default fields and serves as an example for users to add their own fields
 
-/******************* Default Fields ********************/
-
 /******************** Title Field **********************/
-
-// Add title meta box
-add_action( 'people_create_metaboxes', function() { 
-	add_meta_box( 'title', __( 'Title', 'people' ), 'render_people_title_metabox', 'people', 'normal', 'high' );
-} );
 
 /**
  * Render people title meta box.
  * 
- * Creates a lambda function, for rendering the metabox, and adds it to the 'people_title_metabox_render' action.
- * This action is useful for adding additional fields to this metabox
- * Note: If you add a field to this metabox, remember to also add a filter to 'save_post' and 'people_atts'.
- *
  * Calls 'people_title_metabox_render' action.
  */
-if ( ! function_exists('render_people_title_metabox') ) {
-	function render_people_title_metabox( $post ) {
-		add_action( 'people_title_metabox_render' , 
-			function( $post ) {
-				wp_nonce_field( 'people', 'people_title_nonce' ); ?>
-				<p>
-					<input class="widefat" type="text" name="title" id="title" value="<?php echo esc_attr( get_post_meta( $post->ID, '_title', true ) ); ?>" size="30" />
-				</p>
-			<?php
-			}
-		);
-		do_action( 'people_title_metabox_render', $post );
-	}
+function render_people_title_field( $post ) { ?>
+	<label for="title"><?php echo __( 'Title:', 'people' ); ?></label>
+	<p>
+		<input class="widefat" type="text" name="title" id="title" value="<?php echo esc_attr( get_post_meta( $post->ID, '_title', true ) ); ?>" size="30" />
+	</p>
+	<?php
 }
+add_action( 'people_details_metabox', 'render_people_title_field');
 
 // Add save action
-add_action('save_post',
-	function( $post_id ) {
-		if ( 'people' == get_post_type( $post_id ) )
-			people_save_meta( $post_id, 'people', 'people_title_nonce', 'title' );
-	}
-);
+function people_title_save_hook( $post_id ) {
+	if ( 'people' == get_post_type( $post_id ) )
+		people_save_meta( $post_id, 'people', 'title' );
+}
+add_action( 'people_save_details', 'people_title_save_hook' );
 
 // Add people_atts hook
-add_filter( 'people_atts', 
-	function( $arr, $id ) {
-		$arr['title'] = get_post_meta( $id, '_title', true );
-		return $arr;
-	},
-	2,
-	2
-);
+function people_title_atts_hook( $arr, $id ) {
+	$arr['title'] = get_post_meta( $id, '_title', true );
+	return $arr;
+}
+add_filter( 'people_atts', 'people_title_atts_hook', 2, 2 );
 
 /******************** Email Field **********************/
-
-// Add Email meta box
-add_action( 'people_create_metaboxes', function() {
-	add_meta_box( 'email', __( 'Email', 'people' ), 'render_people_email_metabox', 'people', 'normal', 'high' );
-} );
 
 /**
  * Render people email meta box.
  * 
- * Creates a lambda function, for rendering the metabox, and adds it to the 'people_email_metabox_render' action.
- * This action is useful for adding additional fields to this metabox
- * Note: If you add a field to this metabox, remember to also add a filter to the save_post.
- *
- * Calls 'people_email_metabox_render' action.
  */
-if ( ! function_exists('render_people_email_metabox') ) {
-	function render_people_email_metabox( $post ) {
-		add_action( 'people_email_metabox_render', 
-			function( $post ) {
-				wp_nonce_field( 'people', 'people_email_nonce' ); ?>
-				<p>
-					<input class="widefat" type="text" name="email" id="email" value="<?php echo esc_attr( get_post_meta( $post->ID, '_email', true ) ); ?>" size="30" />
-				</p>
-			<?php
-			}
-		);
-		do_action( 'people_email_metabox_render', $post );
-	}
+function render_people_email_field( $post ) { ?>
+	<label for="title"><?php echo __( 'Email:', 'people' ); ?></label>
+	<p>
+		<input class="widefat" type="text" name="email" id="email" value="<?php echo esc_attr( get_post_meta( $post->ID, '_email', true ) ); ?>" size="30" />
+	</p>
+	<?php
 }
+add_action( 'people_details_metabox', 'render_people_email_field');
 
 //save_action
-add_action('save_post',
-	function( $post_id ) {
-		// Only run on people posts
-		if ( 'people' != get_post_type( $post_id ) )
-			return $post_id;
-		// Verify that the input is an actual email address
-		if ( ! ( isset(  $_POST['email'] ) and is_email( $_POST['email'] ) ) )
-			return $post_id;
-		people_save_meta( $post_id, 'people', 'people_email_nonce', 'email' );
-	}
-);
+function people_email_save_hook( $post_id ) {
+	// Verify that the input is an actual email address
+	if ( ! ( isset(  $_POST['email'] ) and is_email( $_POST['email'] ) ) )
+		return $post_id;
+	people_save_meta( $post_id, 'people', 'email' );
+}
+add_action( 'people_save_details', 'people_email_save_hook' );
 
 // Add people_atts hook
-add_filter( 'people_atts', 
-	function( $arr, $id ) {
-		$arr['email'] = get_post_meta( $id, '_email', true );
-		return $arr;
-	},
-	2,
-	2
-);
+function people_email_atts_hook( $arr, $id ) {
+	$arr['email'] = get_post_meta( $id, '_email', true );
+	return $arr;
+}
+add_filter( 'people_atts', 'people_email_atts_hook', 2, 2 );
 
