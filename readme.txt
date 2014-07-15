@@ -1,5 +1,5 @@
 === People === 
-Contributors: Kevin Lenihan
+Contributors: Kevin Lenihan, mattheweppelsheimer
 Tags: people, post type, Rocket Lift
 Requires at least: 3.5.1
 Tested up to: 3.5.2
