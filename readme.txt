@@ -135,3 +135,11 @@ If this you want to display a person differently because you don't like the styl
 == How to Contribute ==
 
 Pull requests [on Github](https://github.com/rocketlift/wp-people-plugin/) are very welcome!
+
+
+== Changelog ==
+
+= 1.0.0 =
+
+* First release.
+
