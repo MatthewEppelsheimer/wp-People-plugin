@@ -28,7 +28,7 @@ By default this plugin supports these fields for a Person:
 * Order: Number used to sort the people (`0` = High Priority, `10` = Low Priority)
 
 
-=== Available Functions ===
+= Available Functions =
 
 People makes the following functions available for use in custom themes:
 
@@ -47,7 +47,7 @@ People makes these filter and action hooks that allow you to modify the plugin's
 * `people_email_metabox_render`: used to add fields to the email metabox
 
 
-=== Available Shortcodes ===
+= Available Shortcodes =
 
 * `[people]` : display the list of people
 
