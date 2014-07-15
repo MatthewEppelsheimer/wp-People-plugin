@@ -11,7 +11,9 @@ Creates a post type for people and provides useful filters to easily adapt the p
    
 == Description ==
 
-People creates a post type that is designed to have the standard fields useful for most users, but also allows advanced users to easily adapt the plugin to suite their needs.
+People lets you manage and display individuals and lists of people on your site. It is intended for displaying bio pages for staff members on a company or organization's website. It is built with flexibility in mind. It is easy for web developers to add more fields (e.g. adding a link to a social network profile) and to use as the foundation for a custom Customer Relationship Management (CRM) or contacts database.
+
+The plugin adds a 'people' post type with standard fields (email, phone, etc.) for a basic staff bio page, and also allows advanced users to easily adapt the plugin to suite their needs.
 
 By default this plugin supports these fields for a Person:
 
@@ -26,14 +28,14 @@ By default this plugin supports these fields for a Person:
 
 === Available Functions ===
 
-The following functions are made explicitly for the users to ... um ... use:
+People makes the following functions available for use in custom themes:
 
-* `People_Post_Type::get_person()` (or, if you don't like classes, `people_get_person()` does the same thing). This returns an array containing all the relevant data about a person. NOTE: must be used from within a loop.
+* `People_Post_Type::get_person()` (or, if you don't like classes, `people_get_person()` does the same thing). This returns an array containing all the relevant data about a person. NOTE: must be used from within the loop.
 * `People_Post_Type::list_people( $args, $callback )` (or if you still don't like classes, `people_list_people( $args, $callback )` will work). This returns a string of html code for rendering all the people that meet the criteria of WP_Query( $args ).
 * `People_Post_Type::render_single_person()` (or if you are bent on not using classes, use `people_render_single_person()` ).
 	This returns a string of html code for rendering a single person. useful in `single.php` or, even better, `single-people.php`. 
 
-Next we have a list of filter and action hooks that allow users to modify this plugin without having to change plugin files, eliminating the fear of updating this plugin. This is just a list of the hooks with a brief description of what they are for; an example for how to use them is farther below:
+People makes these filter and action hooks that allow you to modify the plugin's behavior without editing its files, eliminating the fear of updating. This is just a list of the hooks with a brief description of what they are for. See below for examples of use.
 
 * `people_atts`: used to add a field to the array returned by `People_Post_Type::get_person()`
 * `people_item_callback`: used to set a user defined default for how to render an person in a list of people.
@@ -45,7 +47,7 @@ Next we have a list of filter and action hooks that allow users to modify this p
 
 === Available Shortcodes ===
 
-* `[people]` : renders the list of people
+* `[people]` : display the list of people
 
 
 == Installation ==
@@ -93,7 +95,11 @@ add_filter( 'people_atts',
 
 == Using the Shortcode `[people]` ==
 
-You can simply use the shortcode `[people]` to generate a list of all people using the default display function. It does this by calling However, if this you want to display a person differently because you don't like the style of the default display or if you added meta fields that you want displayed, we have created a simple way to make your own display function. Simply add a filter to 'people_item_callback' that returns a string of html code for rendering a person within a list. 
+You can simply use the shortcode `[people]` to generate a list of all people using the default display function. 
+
+== Modifying HTML Output ==
+
+If this you want to display a person differently because you don't like the style of the default display or if you added meta fields that you want to display, add a filter to 'people_item_callback' that returns a string of html code for rendering a person within a list. 
 
 ```
 add_filter('people_item_callback', 
