@@ -64,35 +64,35 @@ Note: Adding Metaboxes does require familiarality with WordPress coding and shou
 
 Here is the basic template:
 
-```
-add_action( 'people_create_metaboxes', 
-	function() {
-		// replace the ~...~ with your info
-		add_meta_box( '~metabox_id~', __( '~Metabox Display Name~', 'people' ), 'render_people_~metabox_name~_metabox', 'people', 'normal', 'high' );
-	}
-);
-   
-function render_people_~metabox_name~_metabox() {
-	// add code to render actual html
- }
 
-add_action( 'save_post',
-	function( $post_id ) {
-		if ( 'people' == get_post_type( $post_id ) ){
-			// add the code to save your new field(s)
+	add_action( 'people_create_metaboxes', 
+		function() {
+			// replace the ~...~ with your info
+			add_meta_box( '~metabox_id~', __( '~Metabox Display Name~', 'people' ), 'render_people_~metabox_name~_metabox', 'people', 'normal', 'high' );
 		}
-	}
-);
+	);
+	   
+	function render_people_~metabox_name~_metabox() {
+		// add code to render actual html
+	 }
+	
+	add_action( 'save_post',
+		function( $post_id ) {
+			if ( 'people' == get_post_type( $post_id ) ){
+				// add the code to save your new field(s)
+			}
+		}
+	);
+	
+	add_filter( 'people_atts',
+		function( $arr, $id ) {
+			$arr['~meta_field_name~'] = ~meta_field_value~;
+			return $arr;
+		},
+		2,
+		2
+	);
 
-add_filter( 'people_atts',
-	function( $arr, $id ) {
-		$arr['~meta_field_name~'] = ~meta_field_value~;
-		return $arr;
-	},
-	2,
-	2
-);
-```
 
 
 == Using the Shortcode `[people]` ==
@@ -103,33 +103,33 @@ You can simply use the shortcode `[people]` to generate a list of all people usi
 
 If this you want to display a person differently because you don't like the style of the default display or if you added meta fields that you want to display, add a filter to 'people_item_callback' that returns a string of html code for rendering a person within a list. 
 
-```
-add_filter('people_item_callback', 
-	function(){
-		global $post;
-		
-		$person = People_Post_Type::get_person(); // use this line to get an array of useful information about the person, currently in the loop
-		//NOTE: The thumbnail is not included in array returned from People_Post_Type::get_person(), to allow you to specify the size of the thumbnail you want.
-		
-		// html code for a single person
-		// IMPORTANT: must return html as string. DO NOT echo html
-			// Echoing the html will cause the shortcode to print the list of people in, potentially, the wrong location.
-		/*
-			Bad Examples:
-				1. ?> <div class="person"> <?php echo $person['name']; ?> </div> <?php
-				2. echo '<div class="person">' . $person['name'] . '</div>';
-		*/
-		//Good Example:
-		$out = "<div class='person'><div class='person-photo'>";
-		$out .= get_the_post_thumbnail( $post->ID );
-		$out .= "</div>
-			<h2><span class='person-name'>" . $person['name'] . "</span></h2>
-			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
-			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . "</a></p>
-		</div>
-		<div class='person-long-bio'>" . $person['full_bio'] . "</div>";
-		
-		return $out;
-	}
-);
-```
+
+	add_filter('people_item_callback', 
+		function(){
+			global $post;
+			
+			$person = People_Post_Type::get_person(); // use this line to get an array of useful information about the person, currently in the loop
+			//NOTE: The thumbnail is not included in array returned from People_Post_Type::get_person(), to allow you to specify the size of the thumbnail you want.
+			
+			// html code for a single person
+			// IMPORTANT: must return html as string. DO NOT echo html
+				// Echoing the html will cause the shortcode to print the list of people in, potentially, the wrong location.
+			/*
+				Bad Examples:
+					1. ?> <div class="person"> <?php echo $person['name']; ?> </div> <?php
+					2. echo '<div class="person">' . $person['name'] . '</div>';
+			*/
+			//Good Example:
+			$out = "<div class='person'><div class='person-photo'>";
+			$out .= get_the_post_thumbnail( $post->ID );
+			$out .= "</div>
+				<h2><span class='person-name'>" . $person['name'] . "</span></h2>
+				<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
+				<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . "</a></p>
+			</div>
+			<div class='person-long-bio'>" . $person['full_bio'] . "</div>";
+			
+			return $out;
+		}
+	);
+
