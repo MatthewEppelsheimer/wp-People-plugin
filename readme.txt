@@ -67,7 +67,7 @@ The simplest way to use the plugin is to simply invoke the `[people]` shortcode.
 
 Add a filter to `people_item_callback`.
 
-If this you want to display a person differently because you don't like the style of the default display or if you added meta fields that you want to display, add a filter to 'people_item_callback' that returns a string of html code for rendering a person within a list. 
+For example, if this you want to display a person differently because you don't like the style of the default display or if you added meta fields that you want to display, you might write something like this: 
 
 	add_filter('people_item_callback', 
 		function(){
@@ -99,9 +99,9 @@ If this you want to display a person differently because you don't like the styl
 	);
 
 
-= Adding your own Metabox =
+= Add a new attribute to a Person =
 
-Note: Adding Metaboxes does require familiarality with WordPress coding and should only be done by those who are comfortable with filter and action hooks. Examples for how to create metaboxes are in `people-post-type/lib/defaults.php`
+The "attributes or characteristics" of a Person are exposed as Metaboxes. So, if you'd like to associate some kind of data with your particular People that isn't here by default, you simply have to add a new Metabox.
 
 Here is the basic template:
 
@@ -132,6 +132,10 @@ Here is the basic template:
 		2,
 		2
 	);
+
+More examples of creating metaboxes are in `people-post-type/lib/defaults.php`
+
+Note: Adding Metaboxes does require familiarality with WordPress coding and should only be done by those who are comfortable with filter and action hooks.
 
 
 == How to Contribute ==
