@@ -64,7 +64,6 @@ Note: Adding Metaboxes does require familiarality with WordPress coding and shou
 
 Here is the basic template:
 
-
 	add_action( 'people_create_metaboxes', 
 		function() {
 			// replace the ~...~ with your info
@@ -94,15 +93,14 @@ Here is the basic template:
 	);
 
 
-
 == Using the Shortcode `[people]` ==
 
 You can simply use the shortcode `[people]` to generate a list of all people using the default display function. 
 
+
 == Modifying HTML Output ==
 
 If this you want to display a person differently because you don't like the style of the default display or if you added meta fields that you want to display, add a filter to 'people_item_callback' that returns a string of html code for rendering a person within a list. 
-
 
 	add_filter('people_item_callback', 
 		function(){
@@ -133,3 +131,7 @@ If this you want to display a person differently because you don't like the styl
 		}
 	);
 
+
+== How to Contribute ==
+
+Pull requests [on Github](https://github.com/rocketlift/wp-people-plugin/) are very welcome!
