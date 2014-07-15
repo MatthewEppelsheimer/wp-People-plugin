@@ -103,16 +103,16 @@ For example, if this you want to display a person differently because you don't 
 
 The "attributes or characteristics" of a Person are exposed as Metaboxes. So, if you'd like to associate some kind of data with your particular People that isn't here by default, you simply have to add a new Metabox.
 
-Here is the basic template:
+For example, if you want to add `foo` to your People:
 
 	add_action( 'people_create_metaboxes', 
 		function() {
 			// replace the ~...~ with your info
-			add_meta_box( '~metabox_id~', __( '~Metabox Display Name~', 'people' ), 'render_people_~metabox_name~_metabox', 'people', 'normal', 'high' );
+			add_meta_box( 'foo', __( 'True Foo-ness', 'people' ), 'render_people_foo_metabox', 'people', 'normal', 'high' );
 		}
 	);
 	   
-	function render_people_~metabox_name~_metabox() {
+	function render_people_foo_metabox() {
 		// add code to render actual html
 	 }
 	
@@ -126,7 +126,7 @@ Here is the basic template:
 	
 	add_filter( 'people_atts',
 		function( $arr, $id ) {
-			$arr['~meta_field_name~'] = ~meta_field_value~;
+			$arr['foo'] = fooness;
 			return $arr;
 		},
 		2,
