@@ -73,18 +73,12 @@ For example, if this you want to display a person differently because you don't 
 		function(){
 			global $post;
 			
-			$person = People_Post_Type::get_person(); // use this line to get an array of useful information about the person, currently in the loop
-			//NOTE: The thumbnail is not included in array returned from People_Post_Type::get_person(), to allow you to specify the size of the thumbnail you want.
+			// Get an array of useful information about the person, currently in the loop.
+			// NOTE: The thumbnail is not included the in array returned from People_Post_Type::get_person(). This allows you to specify the size of the thumbnail you want.
+			$person = People_Post_Type::get_person(); 
 			
-			// html code for a single person
-			// IMPORTANT: must return html as string. DO NOT echo html
-				// Echoing the html will cause the shortcode to print the list of people in, potentially, the wrong location.
-			/*
-				Bad Examples:
-					1. ?> <div class="person"> <?php echo $person['name']; ?> </div> <?php
-					2. echo '<div class="person">' . $person['name'] . '</div>';
-			*/
-			//Good Example:
+			
+			// Generate HTML for a single person
 			$out = "<div class='person'><div class='person-photo'>";
 			$out .= get_the_post_thumbnail( $post->ID );
 			$out .= "</div>
@@ -97,6 +91,15 @@ For example, if this you want to display a person differently because you don't 
 			return $out;
 		}
 	);
+
+__NOTE__: When generating HTML, you _must_ return it as a string. Do _NOT_ `echo` it, as that could cause the shortcode to print the list of people in the wrong location.
+
+The code above is a good example. This...
+
+	?> <div class="person"> <?php echo $person['name']; ?> </div> <?php
+	echo '<div class="person">' . $person['name'] . '</div>';
+
+...is a bad example.
 
 
 = Add a new attribute to a Person =
