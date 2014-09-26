@@ -11,7 +11,7 @@
 
 class People_Post_Type {
 
-	function setup() {
+	static function setup() {
 		// Wire up actions/filters
 
 		// Change 'enter title here' label in Person editor screen
