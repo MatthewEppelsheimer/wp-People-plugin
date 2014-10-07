@@ -124,7 +124,11 @@ if ( ! function_exists( 'people_render_single_person' ) ) {
  *
  * @kudos http://haet.at/add-tinymce-editor-wordpress-excerpt-field/
  */
-function tinymce_excerpt_js(){?>
+function tinymce_excerpt_js(){
+	if ( 'people' != get_post_type() ) {
+		return;
+	}
+?>
 	<script type="text/javascript">// <![CDATA[
 	    jQuery(document).ready( tinymce_excerpt );
 	    function tinymce_excerpt() {
