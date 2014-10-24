@@ -1,0 +1,51 @@
+$N.n.n
+
+# == This ⤴︎ is the version number of this repository. == #
+#
+# Just the version number string, no other characters. All
+# other instances of "a version number" must match Line 1
+# of this file.
+#
+# When starting a "release" or "hotfix" branch and you must
+# "increment version numbers", start with the above, then
+# check below for more locations.
+#
+# When a "release"/"hotfix" branch is finished, the version
+# number in the 'vN.n.n' tag should match this.
+
+
+# == Numbering Scheme & Method == #
+#
+# (default)
+#  * Method: manual
+#
+# (default)
+#  * Scheme: [SemVer](http://semver.org/)
+#
+# This may be different depending on the project. If we
+# can't use SemVer here, then specify the version-numbering
+# details here.
+
+
+# == Other File Locations == #
+#
+# These are the other locations where this version number is
+# defined in this project:
+#
+# (default for a theme project)
+#  * style.css
+#
+# (default for a plugin project's)
+#  * the-plugin-name.php
+#
+# (default for a WordPress website project)
+#  * wp-content/site-specific-child-theme/style.css
+#  * wp-content/site-specific-plugin/site-specific-plugin.php
+#
+# (if this is the only location)
+#  * none
+#
+# When "incrementing version numbers" on this project, the
+# version numbers in these files must be updated to match,
+# either by hand or by build script.
+
