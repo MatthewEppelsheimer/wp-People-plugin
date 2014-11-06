@@ -109,13 +109,18 @@ class People_Post_Type {
 	 * @return An associative array containing all the meta values for the current $post in the loop
 	 * @return false if current $post is not of post type people
 	 */
-	static function get_person() {
-		// if  id is not given, set it to the_post id
-		$person = get_the_ID();
+	static function get_person( $id = null ) {
+	
+		// if id is not given, set it to the_post id
+		$person = $id;
+		if ( ! is_int( $id ) ) {
+			$person = get_the_ID();
+		}
 		
 		// check if the post type is correct
-		if ( 'people' != get_post_type( $person ) )
+		if ( 'people' != get_post_type( $person ) ) {
 			return false;
+		}
 	
 		$fields = array(
 			'name' => get_the_title( $person ),
@@ -129,9 +134,11 @@ class People_Post_Type {
 		$fields = apply_filters( 'people_atts', $fields, $person );
 		
 		foreach( $fields as $key => $field ) {
-			if ( 'full_bio' !== $key and 'brief_bio' !== $key )
+			if ( 'full_bio' !== $key and 'brief_bio' !== $key ) {
 				// if it is the full bio we don't want to escape the autop tags
 				$field = esc_attr( $field );
+			}
+			$field = apply_filters( 'person_' . $key, $field, $person );
 			$out[$key] = wp_kses( $field, wp_kses_allowed_html( 'post' ) );
 		}
 		return $out;
@@ -148,18 +155,18 @@ class People_Post_Type {
 		
 		$bio_text = sprintf( __( 'View %s\'s full bio', 'people' ), $person['name'] ) ;
 		
-		$output = "<div class='person'>
+		$output = "<div class='pp-person'>
 			<div class='person-photo'>
 			<a href=\"" . get_permalink() . "\" alt=\"$bio_text\">";
 				
 		$size = 'post-thumbnail';
 		$output .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) ) . "</a> ";
-		$output .= '</div>
+		$output .= '</div><!-- .person-photo -->
 			<h2><a href="' . get_permalink() . "\" alt=$bio_text><span class='person-name'> " . $person['name'] . "</span></a></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . '</a></p>
 			<div class="person-short-bio note">' . $person['brief_bio'] . '</div>
-		</div>';
+		</div><!-- .pp-person -->';
 	return $output;
 	}
 	
@@ -174,8 +181,9 @@ class People_Post_Type {
 	public static function list_people( $args = null, $callback = null ) {
 		global $post;
 		
-		if ( empty( $args['orderby'] ) )
+		if ( empty( $args['orderby'] ) ) {
 			$args['orderby'] = 'menu_order';
+		}
 		
 		$people = self::query_people( $args );
 	
@@ -189,12 +197,15 @@ class People_Post_Type {
 				// $callback variable, 
 				// then the action hook,
 				// then the default method self::list_item()
-				if ( $callback )
+				if ( $callback ) {
 					$out .= $callback( $post );
-				elseif ( has_filter('people_item_callback' ) )
+				}
+				elseif ( has_filter('people_item_callback' ) ) {
 					$out .= apply_filters( 'people_item_callback', '' );
-				else
+				}
+				else {
 					$out .= self::list_item();
+				}
 			}
 			wp_reset_query();
 			return $out;
@@ -220,17 +231,17 @@ class People_Post_Type {
 			return apply_filters( 'people_single_callback', '', $person );
 		}
 		
-		$out = "<div class='person'>
+		$out = "<div class='pp-person'>
 			<div class='person-photo'>";
 				
 		$size = 'post-thumbnail';
 		$out .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) );
-		$out .= "</div>
+		$out .= "</div><!-- .person-photo -->
 			<h2><span class='person-name'>" . $person['name'] . "</span></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . "</a></p>
 		</div>
-		<div class='person-long-bio'>" . $person['full_bio'] . "</div>";
+		<div class='person-long-bio'>" . $person['full_bio'] . "</div><!-- .pp-person -->";
 		return $out;
 	}
  
@@ -263,10 +274,12 @@ class People_Post_Type {
 		
 		$query_args = array();
 		
-		if( $atts['category'] )
+		if( $atts['category'] ) {
 			$query_args['category'] = $atts['category'];
-		if( $atts['orderby'] )
+		}
+		if( $atts['orderby'] ) {
 			$query_args['orderby'] = $atts['orderby'];
+		}
 		return self::list_people( $query_args );
 	}
 }

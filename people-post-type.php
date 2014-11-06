@@ -7,6 +7,7 @@ Description: Manage and information on individual people within WordPress
 Author: RocketLift
 Author URI: http://rocketlift.com/
 License: GPL 2
+Text Domain: people
 */
 
 /*  Copyright 2013 Rocket Lift (email : software@rocketlift.com)
@@ -124,28 +125,30 @@ if ( ! function_exists( 'people_render_single_person' ) ) {
  *
  * @kudos http://haet.at/add-tinymce-editor-wordpress-excerpt-field/
  */
-function tinymce_excerpt_js(){
-	if ( 'people' != get_post_type() ) {
-		return;
+if ( ! function_exists( 'people_tinymce_excerpt_js' ) ) {
+	function people_tinymce_excerpt_js() {
+		if ( 'people' != get_post_type() ) {
+			return;
+		}
+	?>
+		<script type="text/javascript">// <![CDATA[
+			jQuery(document).ready( tinymce_excerpt );
+			function tinymce_excerpt() {
+			    jQuery("#excerpt").addClass("mceEditor");
+			    tinyMCE.execCommand("mceAddControl", false, "excerpt");
+			    tinyMCE.onAddEditor.add(function(mgr,ed) {
+			        if(ed.id=="excerpt"){
+			            ed.settings.theme_advanced_buttons2 ="";
+			            ed.settings.theme_advanced_buttons1 = "bold,italic,underline,seperator,justifyleft,justifycenter,justifyright,separator,link,unlink,seperator,pastetext,pasteword,removeformat,seperator,undo,redo,seperator,spellchecker,";
+			        }
+			    });
+			}
+		// ]]></script>
+	<?php
 	}
-?>
-	<script type="text/javascript">// <![CDATA[
-	    jQuery(document).ready( tinymce_excerpt );
-	    function tinymce_excerpt() {
-	        jQuery("#excerpt").addClass("mceEditor");
-	        tinyMCE.execCommand("mceAddControl", false, "excerpt");
-	        tinyMCE.onAddEditor.add(function(mgr,ed) {
-	            if(ed.id=="excerpt"){
-	                ed.settings.theme_advanced_buttons2 ="";
-	                ed.settings.theme_advanced_buttons1 = "bold,italic,underline,seperator,justifyleft,justifycenter,justifyright,separator,link,unlink,seperator,pastetext,pasteword,removeformat,seperator,undo,redo,seperator,spellchecker,";
-	            }
-	        });
-	    }
-	// ]]></script>
-<?php
 }
-add_action( 'admin_head-post.php', 'tinymce_excerpt_js');
-add_action( 'admin_head-post-new.php', 'tinymce_excerpt_js');
+add_action( 'admin_head-post.php', 'people_tinymce_excerpt_js');
+add_action( 'admin_head-post-new.php', 'people_tinymce_excerpt_js');
 
 /**
  * Handles the saving of a meta field
@@ -167,16 +170,27 @@ if ( ! function_exists( 'people_save_meta' ) ) {
 	}
 }
 
-function people_details_box() {
-	add_meta_box( 'details', __( 'Person Details', 'people' ), 'render_people_details_metabox', 'people', 'normal', 'high' );
+/**
+ * Adds the metabox for the details
+ */
+if ( ! function_exists( 'people_details_box') ) {
+	function people_details_box() {
+		add_meta_box( 'details', __( 'Person Details', 'people' ), 'render_people_details_metabox', 'people', 'normal', 'high' );
+	}
+	add_action( 'people_create_metaboxes', 'people_details_box' );
 }
-add_action( 'people_create_metaboxes', 'people_details_box' );
-
-function render_people_details_metabox( $post ) {
-	wp_nonce_field( 'people', 'people_details_nonce' ); 
-	do_action( 'people_details_metabox', $post );
+/**
+ * Actual rendering of the details metabox
+ */
+if ( ! function_exists( 'render_people_details_metabox' ) {
+	function render_people_details_metabox( $post ) {
+		wp_nonce_field( 'people', 'people_details_nonce' ); 
+		do_action( 'people_details_metabox', $post );
+	}
 }
-
+/**
+ * Verify that the detail nonce has been defined and this is the poeple CPT before saving
+ */
 function people_verify_detail_nonce( $post_id ) {
 	
 	// only call action if save is for the people post type
@@ -195,44 +209,56 @@ function people_verify_detail_nonce( $post_id ) {
 }
 add_action( 'save_post', 'people_verify_detail_nonce' );
 
-function people_user_link() {
-	add_meta_box( 'people_pu_metabox', __('User Account', 'people' ), 'people_user_box', 'people', 'side' );
-}
-add_action( 'add_meta_boxes', 'people_user_link' );
-
-function people_user_box( $post ){
-	wp_nonce_field( 'people', 'people_user_nonce' );
-	
-	$user_id = get_post_meta( $post->ID, '_user', true );
-	wp_dropdown_users( array(
-		'show_option_none' => 'Not a User',
-		'selected' => $user_id
-	) );
-}
-
-// Add save action
-
-function people_save_user( $post_id ) {
-
-	if ( 'people' != get_post_type( $post_id ) ) { 
-		return $post_id;
+/**
+ * MetaBox that connects users entity to the People CPT
+ */
+if ( ! function_exists( 'people_user_link' ) ) {
+	function people_user_link() {
+		add_meta_box( 'people_pu_metabox', __( 'User Account', 'people' ), 'people_user_box', 'people', 'side' );
 	}
-	// manually verify this nonce
-	if ( ! wp_verify_nonce( $_POST['people_user_nonce'], 'people' )) {
-		return $post_id;
-	}
-	
-	people_save_meta( $post_id, 'people', 'user' );
-	
-}
-add_action('save_post', 'people_save_user' );
+	add_action( 'add_meta_boxes', 'people_user_link' );
 
-// Add people_atts hook
-function people_user_atts_hook( $arr, $id ) {
-	$arr['user'] = get_post_meta( $id, '_user', true );
-	return $arr;
+	function people_user_box( $post ){
+		wp_nonce_field( 'people', 'people_user_nonce' );
+	
+		$user_id = get_post_meta( $post->ID, '_user', true );
+		wp_dropdown_users( array(
+			'show_option_none' => 'Not a User',
+			'selected' => $user_id
+		) );
+	}
 }
-add_filter( 'people_atts', 'people_user_atts_hook', 2, 2 );
+
+/*
+ * Add save action
+ */
+if ( ! function_exists( 'people_save_user' ) {
+	function people_save_user( $post_id ) {
+
+		if ( 'people' != get_post_type( $post_id ) ) { 
+			return $post_id;
+		}
+		// manually verify this nonce
+		if ( ! wp_verify_nonce( $_POST['people_user_nonce'], 'people' )) {
+			return $post_id;
+		}
+	
+		people_save_meta( $post_id, 'people', 'user' );
+	
+	}
+	add_action('save_post', 'people_save_user' );
+}
+
+/* 
+ * Add people_atts hook
+ */
+if ( ! function_exists( 'people_user_atts_hook' ) {
+	function people_user_atts_hook( $arr, $id ) {
+		$arr['user'] = get_post_meta( $id, '_user', true );
+		return $arr;
+	}
+	add_filter( 'people_atts', 'people_user_atts_hook', 2, 2 );
+}
 
 // Add default fields
 require_once( 'lib/defaults.php' );
