@@ -178,14 +178,15 @@ function render_people_details_metabox( $post ) {
 }
 
 function people_verify_detail_nonce( $post_id ) {
-	// Verify this came from the our screen and with proper authorization,
-	// because save_post can be triggered at other times
-	if ( ! wp_verify_nonce( $_POST['people_details_nonce'], 'people' )) {
-		return $post_id;
-	}
 	
 	// only call action if save is for the people post type
 	if ( 'people' != get_post_type( $post_id ) ) {
+		return $post_id;
+	}
+	
+	// Verify this came from the our screen and with proper authorization,
+	// because save_post can be triggered at other times
+	if ( ! wp_verify_nonce( $_POST['people_details_nonce'], 'people' )) {
 		return $post_id;
 	}
 	
@@ -213,14 +214,16 @@ function people_user_box( $post ){
 
 function people_save_user( $post_id ) {
 
+	if ( 'people' != get_post_type( $post_id ) ) { 
+		return $post_id;
+	}
 	// manually verify this nonce
 	if ( ! wp_verify_nonce( $_POST['people_user_nonce'], 'people' )) {
 		return $post_id;
 	}
 	
-	if ( 'people' == get_post_type( $post_id ) ) { 
-		people_save_meta( $post_id, 'people', 'user' );
-	}
+	people_save_meta( $post_id, 'people', 'user' );
+	
 }
 add_action('save_post', 'people_save_user' );
 
