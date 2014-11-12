@@ -182,7 +182,7 @@ if ( ! function_exists( 'people_details_box') ) {
 /**
  * Actual rendering of the details metabox
  */
-if ( ! function_exists( 'render_people_details_metabox' ) {
+if ( ! function_exists( 'render_people_details_metabox' ) ) {
 	function render_people_details_metabox( $post ) {
 		wp_nonce_field( 'people', 'people_details_nonce' ); 
 		do_action( 'people_details_metabox', $post );
@@ -232,7 +232,7 @@ if ( ! function_exists( 'people_user_link' ) ) {
 /*
  * Add save action
  */
-if ( ! function_exists( 'people_save_user' ) {
+if ( ! function_exists( 'people_save_user' ) ) {
 	function people_save_user( $post_id ) {
 
 		if ( 'people' != get_post_type( $post_id ) ) { 
@@ -252,7 +252,7 @@ if ( ! function_exists( 'people_save_user' ) {
 /* 
  * Add people_atts hook
  */
-if ( ! function_exists( 'people_user_atts_hook' ) {
+if ( ! function_exists( 'people_user_atts_hook' ) ) {
 	function people_user_atts_hook( $arr, $id ) {
 		$arr['user'] = get_post_meta( $id, '_user', true );
 		return $arr;
