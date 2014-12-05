@@ -70,7 +70,7 @@ Add a filter to `people_item_callback`.
 For example, if this you want to display a person differently because you don't like the style of the default display or if you added meta fields that you want to display, you might write something like this: 
 
 	add_filter('people_item_callback', 
-		function(){
+		function() {
 			global $post;
 			
 			// Get an array of useful information about the person, currently in the loop.
@@ -117,11 +117,11 @@ For example, if you want to add `foo` to your People:
 	   
 	function render_people_foo_metabox() {
 		// add code to render actual html
-	 }
+	}
 	
 	add_action( 'save_post',
 		function( $post_id ) {
-			if ( 'people' == get_post_type( $post_id ) ){
+			if ( 'people' == get_post_type( $post_id ) ) {
 				// add the code to save your new field(s)
 			}
 		}
