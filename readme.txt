@@ -3,7 +3,7 @@ Contributors: Kevin Lenihan, mattheweppelsheimer
 Tags: people, post type, Rocket Lift
 Requires at least: 3.5.1
 Tested up to: 3.9.1
-Stable: 1.0.0
+Stable: 1.0
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -148,7 +148,7 @@ Pull requests [on Github](https://github.com/rocketlift/wp-people-plugin/) are v
 
 == Changelog ==
 
-= 1.0.0 =
+= 1.0 =
 
 * First release.
 
