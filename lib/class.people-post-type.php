@@ -188,7 +188,7 @@ class People_Post_Type {
 		$people = self::query_people( $args );
 	
 		if ( $people->have_posts() ) {
-			$out = '';
+			$out = apply_filters( 'people_list_before_loop', '', $args, $shortcode_atts );
 			while ( $people->have_posts() ) {
 				$people->the_post();
 			
@@ -208,6 +208,7 @@ class People_Post_Type {
 				}
 			}
 			wp_reset_query();
+			$out .= apply_filters( 'people_list_after_loop', '', $args, $shortcode_atts );
 			return $out;
 		}
 	
