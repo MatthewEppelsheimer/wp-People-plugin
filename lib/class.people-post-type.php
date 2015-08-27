@@ -240,6 +240,7 @@ class People_Post_Type {
 			<h2><span class='person-name'>" . $person['name'] . "</span></h2>
 			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
 			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . "</a></p>
+			<p class='person-contact'><a href=\"tel:" . $person['phone-number'] . "\" class='phone-number'>" . $person['phone-number'] . "</a></p>
 		</div>
 		<div class='person-long-bio'>" . $person['full_bio'] . "</div><!-- .pp-person -->";
 		return $out;

@@ -38,7 +38,7 @@ add_filter( 'people_atts', 'people_title_atts_hook', 2, 2 );
  * 
  */
 function render_people_email_field( $post ) { ?>
-	<label for="title"><?php echo __( 'Email:', 'people' ); ?></label>
+	<label for="email"><?php echo __( 'Email:', 'people' ); ?></label>
 	<p>
 		<input class="widefat" type="text" name="email" id="email" value="<?php echo esc_attr( get_post_meta( $post->ID, '_email', true ) ); ?>" size="30" />
 	</p>
@@ -62,3 +62,35 @@ function people_email_atts_hook( $arr, $id ) {
 }
 add_filter( 'people_atts', 'people_email_atts_hook', 2, 2 );
 
+
+/******************** Phone Field **********************/
+
+/**
+ * Render people email meta box.
+ *
+ */
+function render_people_phone_field( $post ) { ?>
+	<label for="phone-number"><?php echo __( 'Phone number:', 'people' ); ?></label>
+	<p>
+		<input class="widefat" type="text" name="phone-number" id="phone-number" value="<?php echo esc_attr( get_post_meta( $post->ID, '_phone-number', true ) ); ?>" size="30" />
+	</p>
+<?php
+}
+add_action( 'people_details_metabox', 'render_people_phone_field');
+
+//save_action
+function people_phone_save_hook( $post_id ) {
+	// Verify that the input is an actual email address
+	if ( ! isset(  $_POST['phone-number'] ) ) {
+		return $post_id;
+	}
+	people_save_meta( $post_id, 'people', 'phone-number' );
+}
+add_action( 'people_save_details', 'people_phone_save_hook' );
+
+// Add people_atts hook
+function people_phone_atts_hook( $arr, $id ) {
+	$arr['phone-number'] = get_post_meta( $id, '_phone-number', true );
+	return $arr;
+}
+add_filter( 'people_atts', 'people_phone_atts_hook', 2, 2 );
