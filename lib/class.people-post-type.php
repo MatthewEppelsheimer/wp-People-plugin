@@ -269,7 +269,8 @@ class People_Post_Type {
 				'category' => '',
 				'orderby'  => ''
 			),
-			$atts
+			$atts,
+			'people'
 		);
 		
 		$query_args = array();
@@ -280,7 +281,7 @@ class People_Post_Type {
 		if( $atts['orderby'] ) {
 			$query_args['orderby'] = $atts['orderby'];
 		}
-		return self::list_people( $query_args );
+		return self::list_people( apply_filters( 'people_shortcode_query_args', $query_args, $atts ) );
 	}
 }
 
