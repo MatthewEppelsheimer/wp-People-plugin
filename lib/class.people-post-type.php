@@ -178,7 +178,7 @@ class People_Post_Type {
 	 *	
 	 *	@return true if we output html with people; false if not
 	 */
-	public static function list_people( $args = null, $callback = null ) {
+	public static function list_people( $args = null, $callback = null, $shortcode_atts = null ) {
 		global $post;
 		
 		if ( empty( $args['orderby'] ) ) {
@@ -282,7 +282,7 @@ class People_Post_Type {
 		if( $atts['orderby'] ) {
 			$query_args['orderby'] = $atts['orderby'];
 		}
-		return self::list_people( apply_filters( 'people_shortcode_query_args', $query_args, $atts ) );
+		return self::list_people( apply_filters( 'people_shortcode_query_args', $query_args, $atts ), null, $atts );
 	}
 }
 
