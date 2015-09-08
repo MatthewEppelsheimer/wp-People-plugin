@@ -179,8 +179,7 @@ class People_Post_Type {
 	 *	@return true if we output html with people; false if not
 	 */
 	public static function list_people( $args = null, $callback = null, $shortcode_atts = null ) {
-		global $post;
-		
+
 		if ( empty( $args['orderby'] ) ) {
 			$args['orderby'] = 'menu_order';
 		}
@@ -198,10 +197,10 @@ class People_Post_Type {
 				// then the action hook,
 				// then the default method self::list_item()
 				if ( $callback ) {
-					$out .= $callback( $post );
+					$out .= $callback( $args, $shortcode_atts );
 				}
 				elseif ( has_filter('people_item_callback' ) ) {
-					$out .= apply_filters( 'people_item_callback', '' );
+					$out .= apply_filters( 'people_item_callback', '', $args, $shortcode_atts );
 				}
 				else {
 					$out .= self::list_item();
