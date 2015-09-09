@@ -98,6 +98,8 @@ class People_Post_Type {
 
 		$results = new WP_Query( $query_args );
 
+		wp_reset_query();
+
 		return $results;
 	}
 
