@@ -263,3 +263,58 @@ if ( ! function_exists( 'people_user_atts_hook' ) ) {
 // Add default fields
 require_once( 'lib/defaults.php' );
 
+/**
+ * One Time Script to convert People metadata to CMB2 fields
+ */
+function rli_people_update_people_meta_for_cmb2() {
+	// Get all of the People posts
+	$args = array(
+		'post_type' => 'people',
+		'posts_per_page' => -1
+	);
+	$people = new WP_Query( $args );
+
+	foreach ( $people->posts as $post ) {
+
+		// Get existing values
+
+		$title = get_post_meta( $post->ID, '_title', true );
+		$phone_num = get_post_meta( $post->ID, '_phone-number', true );
+		$phone_extension = get_post_meta( $post->ID, '_phone_extension', true );
+		$email = get_post_meta( $post->ID, '_email', true );
+
+		// Set new values
+
+		if ( ! empty( $title ) ) {
+			$title_group = get_post_meta( $post->ID, '_rli_people_group_title' );
+			$title_group[0]['title'] = $title;
+			update_post_meta( $post->ID, '_rli_people_group_title', $title_group );
+		}
+
+		$phone_group = get_post_meta( $post->ID, '_rli_people_group_phone' );
+		if ( ! empty( $phone_num ) ) {
+			$phone_group[0]['phone'] = $phone_num;
+		}
+		if ( ! empty( $phone_extension ) ) {
+			$phone_group[0]['extension'] = $phone_extension;
+		}
+		update_post_meta( $post->ID, '_rli_people_group_phone', $phone_group );
+
+		if ( ! empty( $email ) ) {
+			$email_group = get_post_meta( $post->ID, '_rli_people_group_email' );
+			$email_group[0]['email'] = $email;
+			update_post_meta( $post->ID, '_rli_people_group_email', $email_group );
+		}
+
+		// Cleanup: delete existing values
+		if ( true ) { // false when debugging to avoid losing test data
+			delete_post_meta( $post->ID, '_title' );
+			delete_post_meta( $post->ID, '_phone-number' );
+			delete_post_meta( $post->ID, '_phone_extension' );
+			delete_post_meta( $post->ID, '_email' );
+		}
+
+	}
+}
+
+add_action( 'rli_one_time_scripts', 'rli_people_update_people_meta_for_cmb2' );
