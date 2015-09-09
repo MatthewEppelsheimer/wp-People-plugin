@@ -112,36 +112,18 @@ class People_Post_Type {
 	static function get_person( $id = null ) {
 	
 		// if id is not given, set it to the_post id
-		$person = $id;
 		if ( ! is_int( $id ) ) {
-			$person = get_the_ID();
+			$id = get_the_ID();
 		}
 		
 		// check if the post type is correct
-		if ( 'people' != get_post_type( $person ) ) {
+		if ( 'people' != get_post_type( $id ) ) {
 			return false;
 		}
-	
-		$fields = array(
-			'name' => get_the_title( $person ),
-			// get_the_content() does not apply the filters the_content() does,
-			// so manually add the filters
-			'full_bio' => apply_filters( 'the_content', get_the_content() ),
-			'brief_bio' => apply_filters( 'the_excerpt', get_the_excerpt() ),
-		);
-	
-		// Users add to this filter to append their own fields to the array
-		$fields = apply_filters( 'people_atts', $fields, $person );
-		
-		foreach( $fields as $key => $field ) {
-			if ( 'full_bio' !== $key and 'brief_bio' !== $key ) {
-				// if it is the full bio we don't want to escape the autop tags
-				$field = esc_attr( $field );
-			}
-			$field = apply_filters( 'person_' . $key, $field, $person );
-			$out[$key] = wp_kses( $field, wp_kses_allowed_html( 'post' ) );
-		}
-		return $out;
+
+		$person = new Person( $id );
+
+		return $person;
 	}
 
 	/**
@@ -200,7 +182,7 @@ class People_Post_Type {
 					$out .= $callback( $args, $shortcode_atts );
 				}
 				elseif ( has_filter('people_item_callback' ) ) {
-					$out .= apply_filters( 'people_item_callback', '', $args, $shortcode_atts );
+					$out .= apply_filters( 'people_item_callback', '', get_the_id(), $shortcode_atts );
 				}
 				else {
 					$out .= self::list_item();
