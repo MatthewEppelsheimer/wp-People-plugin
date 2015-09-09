@@ -302,7 +302,7 @@ function people_render_emails( $emails, $person = null ) {
 		return '';
 	}
 
-	$output = "<" . apply_filters( 'rli_people_filter_render_emails_wrapper_html_element', 'p', $emails, $person ) . " class='" . apply_filters( 'rli_people_filter_render_titles_wrapper_class', 'person-email', $titles, $person ) . "'>";
+	$output = "<" . apply_filters( 'rli_people_filter_render_emails_wrapper_html_element', 'p', $emails, $person ) . " class='" . apply_filters( 'rli_people_filter_render_titles_wrapper_class', 'person-email', $emails, $person ) . "'>";
 
 	foreach( $emails as $email ) {
 		$output .= "<" . apply_filters( 'rli_people_filter_render_email_item_html_element', 'a', $email, $person ) . " class='" . apply_filters( 'rli_people_filter_render_email_item_class', 'person-email email', $email, $person ) . "' href='mailto:" . $email . "'>" . $email . "</" . apply_filters( 'rli_people_filter_render_email_item_html_element', 'a', $email, $person ) . ">";
