@@ -65,7 +65,7 @@ class People_Post_Type {
 				'parent_item_colon' => __( 'Parent Person:', 'people' )
 			),
 			
-		'register_meta_box_cb' => array( get_class(), 'create_people_metaboxes'),
+		// 'register_meta_box_cb' => array( get_class(), 'create_people_metaboxes'),
 		'menu_icon' => 'dashicons-admin-users' 
 		) );
 	}
