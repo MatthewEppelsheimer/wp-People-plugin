@@ -26,7 +26,7 @@ add_action( 'people_save_details', 'people_title_save_hook' );
 
 // Add people_atts hook
 function people_title_atts_hook( $arr, $id ) {
-	$arr['title'] = get_post_meta( $id, '_title', true );
+	$arr['title'] = get_post_meta( $id, '_rli_people_group_title', false );
 	return $arr;
 }
 add_filter( 'people_atts', 'people_title_atts_hook', 2, 2 );
@@ -57,7 +57,7 @@ add_action( 'people_save_details', 'people_email_save_hook' );
 
 // Add people_atts hook
 function people_email_atts_hook( $arr, $id ) {
-	$arr['email'] = get_post_meta( $id, '_email', true );
+	$arr['email'] = get_post_meta( $id, '_rli_people_group_email', false );
 	return $arr;
 }
 add_filter( 'people_atts', 'people_email_atts_hook', 2, 2 );
@@ -90,7 +90,8 @@ add_action( 'people_save_details', 'people_phone_save_hook' );
 
 // Add people_atts hook
 function people_phone_atts_hook( $arr, $id ) {
-	$arr['phone-number'] = get_post_meta( $id, '_phone-number', true );
+	$array_maybe = get_post_meta( $id, '_rli_people_group_phone', false );
+	$arr['phone_number'] = $array_maybe;
 	return $arr;
 }
 add_filter( 'people_atts', 'people_phone_atts_hook', 2, 2 );
