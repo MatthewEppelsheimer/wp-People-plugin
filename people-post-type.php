@@ -27,9 +27,10 @@ Text Domain: people
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if ( ! class_exists( 'People_Post_Type' ) ) {
-	require_once( 'lib/class.people-post-type.php' );
+if ( ! defined( 'RLI_PEOPLE_PREFIX' ) ) {
+	define( 'RLI_PEOPLE_PREFIX', 'rli_people_' );
 }
+
 /**
  * Initialization routine for the plugin.
  * - Registers custom post types.
@@ -37,14 +38,19 @@ if ( ! class_exists( 'People_Post_Type' ) ) {
  * @since 0.2
  * @todo Register the default textdomain.
  */
-if ( ! function_exists( 'people_post_type_init' ) ) {
-	function people_post_type_init() {
-		// @todo load_plugin_textdomain( 'people_translate', false, dirname( dirname( plugin_basename( __FILE__) ) ) . '/lang/' );
-		People_Post_Type::setup();
-	}
-	add_action( 'init', 'people_post_type_init' );
-}
+function rli_people_init() {
 
+	require_once( 'lib/cmb.php' );
+	if ( ! class_exists( 'People_Post_Type' ) ) {
+		require_once( 'lib/class.people-post-type.php' );
+	}
+	if ( ! class_exists( 'Person' ) ) {
+		require_once( 'lib/class.Person.php' );
+	}
+
+	People_Post_Type::setup();
+}
+add_action( 'init', 'rli_people_init' );
 
 /**
  * Plugin activation
