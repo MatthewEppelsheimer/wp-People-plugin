@@ -15,6 +15,12 @@ class Person {
 	private $person;
 
 	/**
+	 * @var string The person's name
+	 * Not stored during instantiation; only stored if looked up later.
+	 */
+	private $name;
+
+	/**
 	 * @var array Array of post meta for the corresponding People post
 	 */
 	private $meta;
@@ -23,12 +29,6 @@ class Person {
 	 * @var string Prefix for post meta values
 	 */
 	private $meta_prefix;
-
-	/**
-	 * @var string The person's name
-	 * Not stored during instantiation; only stored if looked up later.
-	 */
-	private $name;
 
 	/**
 	 * @var array Array of titles associated with the person.
