@@ -255,7 +255,100 @@ if ( ! function_exists( 'people_save_user' ) ) {
 	add_action('save_post', 'people_save_user' );
 }
 
-/* 
+
+// @todo make classes and markup filterable
+
+/**
+ * Loop over multiple titles, rendering markup for a template.
+ *
+ * A convenience template tag for when a person has multiple titles to display.
+ * Also works with single title values.
+ *
+ * @todo document filters
+ * @todo add filter to override entire output
+ * @param $titles array of title fields
+ * @param null $person  WP_Query object with the specific People post
+ *
+ * @return string markup to render in a template
+ */
+function people_render_titles( $titles, $person = null ) {
+	if ( empty( $titles ) ) {
+		return '';
+	}
+	$output = "<" . apply_filters( 'rli_people_filter_render_titles_wrapper_html_element', 'p', $titles, $person ) . " class='" . apply_filters( 'rli_people_filter_render_titles_wrapper_class', 'person-meta', $titles, $person ) . "'>";
+	foreach ( $titles as $title ) {
+		$output .= "<" . apply_filters( 'rli_people_filter_render_title_item_html_element', 'span', $title, $person ) . " class='" . apply_filters( 'rli_people_filter_render_title_item_class', 'person-title title', $title, $person ) . "'>" . esc_html( $title ) . "</" . apply_filters( 'rli_people_filter_render_title_item_html_element', 'span', $title, $person ) . ">";
+	}
+	$output .= "</" . apply_filters( 'rli_people_filter_render_titles_wrapper_html_element', 'p', $titles, $person ) . ">";
+
+	return $output;
+}
+
+/**
+ * Loop over multiple emails, rendering markup for a template.
+ *
+ * A convenience template tag for when a person has multiple emails to display.
+ * Also works with single email values.
+ *
+ * @todo document filters
+ * @todo add filter to override entire output
+ * @param $emails array of email addresses
+ * @param null $person  WP_Query object with the specific People post
+ *
+ * @return string markup to render in a template
+ */
+function people_render_emails( $emails, $person = null ) {
+	if ( empty( $emails) ) {
+		return '';
+	}
+
+	$output = "<" . apply_filters( 'rli_people_filter_render_emails_wrapper_html_element', 'p', $emails, $person ) . " class='" . apply_filters( 'rli_people_filter_render_titles_wrapper_class', 'person-email', $titles, $person ) . "'>";
+
+	foreach( $emails as $email ) {
+		$output .= "<" . apply_filters( 'rli_people_filter_render_email_item_html_element', 'a', $email, $person ) . " class='" . apply_filters( 'rli_people_filter_render_email_item_class', 'person-email email', $email, $person ) . "' href='mailto:" . $email . "'>" . $email . "</" . apply_filters( 'rli_people_filter_render_email_item_html_element', 'a', $email, $person ) . ">";
+	}
+	$output .= "</" . apply_filters( 'rli_people_filter_render_emails_wrapper_html_element', 'p', $emails, $person ) . ">";
+
+	return $output;
+}
+
+/**
+ * Loop over multiple phone numbers, rendering markup for a template.
+ *
+ * A convenience template tag for when a person has multiple phone numbers to display.
+ * Also works with single phone number. Supports both the number, and an extension field.
+ *
+ * @todo document filters
+ * @todo add filter to override entire output
+ * @param $phone_numbers array of phone numbers (each an array with main number and extension)
+ * @param null $person WP_Query object with the specific People post
+ *
+ * @return string markup to render in a template
+ */
+function people_render_phone_numbers( $phone_numbers, $person = null ) {
+	if ( empty( $phone_numbers) ) {
+		return '';
+	}
+
+	$output = "<" . apply_filters( 'rli_people_filter_render_phone_numbers_wrapper_html_element', 'p', $phone_numbers, $person ) . " class='" . apply_filters( 'rli_people_filter_render_titles_wrapper_class', 'person-phone', $titles, $person ) . "'>";
+
+	foreach( $phone_numbers as $number ) {
+		$output .= "<" . apply_filters( 'rli_people_filter_render_phone_number_item_html_element', 'span', $number, $person ) . " class='" . apply_filters( 'rli_people_filter_render_phone_number_item_class', 'person-phone-number phone-number', $number, $person ) . "'>";
+		if ( ! empty( $number['phone'] ) ) {
+			$output .= "<a href='tel:" . $number['phone'] . "'>" . $number['phone'] . "</a>";
+			if ( ! empty( $number['extension'] ) ) {
+				$output .= " ext. <" . apply_filters( 'rli_people_filter_render_phone_extension_item_html_element', 'span', $number, $person ) . " class='" . apply_filters( 'rli_people_filter_render_phone_extension_item_class', 'person-phone-extension phone-extension', $number, $person ) . "'>" . $number['extension'] . "</" . apply_filters( 'rli_people_filter_render_phone_extension_item_html_element', 'span', $number, $person ) . ">";
+			}
+		}
+		$output .= "</" . apply_filters( 'rli_people_filter_render_phone_number_item_html_element', 'span', $number, $person ) . ">";
+	}
+	$output .= "</" . apply_filters( 'rli_people_filter_render_phone_numbers_wrapper_html_element', 'p', $phone_numbers, $person ) . ">";
+
+	return $output;
+
+}
+
+/*
  * Add people_atts hook
  */
 if ( ! function_exists( 'people_user_atts_hook' ) ) {
