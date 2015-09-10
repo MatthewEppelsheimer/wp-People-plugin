@@ -88,6 +88,30 @@ class Person {
 	}
 
 	/**
+	 * Get the person's featured image
+	 *
+	 * @param string $size The registered image size to crop to
+	 *
+	 * @return string The thumbnail's markup
+	 */
+	public function get_thumbnail( $size = 'thumbnail' ) {
+		$thumbnail = get_the_post_thumbnail( $this->ID, $size );
+
+		return $thumbnail;
+	}
+
+	/**
+	 * Get the person's bio
+	 *
+	 * @return string The bio content
+	 */
+	public function get_bio() {
+		$bio = $this->person->post->post_content;
+
+		return $bio;
+	}
+
+	/**
 	 * Get a person's post meta value, given a meta key
 	 *
 	 * Accepts a $short_key string to abstract post_meta prefixes from users.
