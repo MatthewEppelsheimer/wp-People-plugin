@@ -48,6 +48,10 @@ function rli_people_init() {
 		require_once( 'lib/class.Person.php' );
 	}
 
+	if ( ! function_exists( 'get_post_thumbnail_without_dimensions' ) ) {
+		require_once( 'lib/function.get_post_thumbnail_without_dimensions.php' );
+	}
+
 	People_Post_Type::setup();
 }
 add_action( 'init', 'rli_people_init' );
