@@ -95,7 +95,8 @@ class Person {
 	 * @return string The thumbnail's markup
 	 */
 	public function get_thumbnail( $size = 'thumbnail' ) {
-		$thumbnail = get_the_post_thumbnail( $this->ID, $size );
+		$attachment_id = get_post_thumbnail_id( $this->ID );
+		$thumbnail = get_post_thumbnail_without_dimensions( $attachment_id, $size );
 
 		return $thumbnail;
 	}
