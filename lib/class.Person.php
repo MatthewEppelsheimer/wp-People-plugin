@@ -198,6 +198,10 @@ class Person {
 		// for some good reason, or is local logic messing w/ the data?
 		$email_items = maybe_unserialize( $emails_group[0] );
 
+		if ( empty( $email_items ) ) {
+			return false;
+		}
+
 		foreach ( $email_items as $probably_serialized_item ) {
 			$item = maybe_unserialize( $probably_serialized_item );
 
