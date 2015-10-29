@@ -46,7 +46,7 @@ class People_Post_Type {
 				'excerpt',
 				'page-attributes',
 			),
-			'taxonomies' => array( 'post_tag', 'post_category' ),
+			//'taxonomies' => array( 'post_tag', 'post_category' ),
 			'rewrite' =>  array(
 				'slug' => 'people'
 			),
