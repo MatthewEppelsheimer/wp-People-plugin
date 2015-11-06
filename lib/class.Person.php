@@ -240,18 +240,20 @@ class Person {
 		// for some good reason, or is local logic messing w/ the data?
 		$phone_items = maybe_unserialize( $phone_group[0] );
 
-		foreach ( $phone_items as $probably_serialized_item ) {
-			$item = maybe_unserialize( $probably_serialized_item );
+		if ( ! empty ( $phone_items ) ) {
+			foreach ( $phone_items as $probably_serialized_item ) {
+				$item = maybe_unserialize( $probably_serialized_item );
 
-			$item_array = array();
-			if ( isset( $item['phone'] ) ) {
-				$item_array['phone'] = esc_html( $item['phone'] );
+				$item_array = array();
+				if ( isset( $item['phone'] ) ) {
+					$item_array['phone'] = esc_html( $item['phone'] );
+				}
+				if ( isset( $item['extension'] ) ) {
+					$item_array['extension'] = esc_html( $item['extension'] );
+				}
+				// @todo create a filter for extensibility here?
+				$phone_numbers[] = $item_array;
 			}
-			if ( isset( $item['extension'] ) ) {
-				$item_array['extension'] = esc_html( $item['extension'] );
-			}
-			// @todo create a filter for extensibility here?
-			$phone_numbers[] = $item_array;
 		}
 
 		if ( empty ( $phone_numbers ) ) {
