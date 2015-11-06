@@ -63,7 +63,7 @@ add_action( 'init', 'rli_people_init' );
  */
 if ( ! function_exists( 'people_post_type_activation' ) ) {
 	function people_post_type_activation() {
-		people_post_type_init();
+		rli_people_init();
 		flush_rewrite_rules();
 	}
 	register_activation_hook( __FILE__, 'people_post_type_activation' );
