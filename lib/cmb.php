@@ -1,6 +1,6 @@
 <?php
 /**
- * Include and setup custom metaboxes and fields. 
+ * Include and setup custom metaboxes and fields.
  *
  * @category RLI People
  * @license  http://www.opensource.org/licenses/gpl-license.php GPL v2.0 (or later)
@@ -414,6 +414,37 @@ function rli_people_register_details_metabox() {
 	) );
 
 	$cmb_group->add_group_field( $phone_group_field_id, array(
+		'name'        => __( 'Notes', 'rli_people' ),
+		'description' => __( 'These are for editorial purposes only and do not display on the site.', 'rli_people' ),
+		'id'          => 'notes',
+		'type'        => 'textarea_small',
+	) );
+
+	/**
+	 * Social media profiles (repeating)
+	 */
+
+	$socail_group_field_id = $cmb_group->add_field( array(
+		'id'          => $prefix . 'social',
+		'type'        => 'group',
+		'description' => __( 'Social media profiles', 'rli_people' ),
+		'options'     => array(
+			'group_title'   => __( 'Social media profile {#}', 'rli_people' ), // {#} gets replaced by row number
+			'add_button'    => __( 'Add another profile', 'rli_people' ),
+			'remove_button' => __( 'Remove this profile', 'rli_people' ),
+			'sortable'      => true, // beta
+		)
+	) );
+
+	// Group fields.
+	// The parent field's id needs to be passed as the first argument.
+	$cmb_group->add_group_field( $socail_group_field_id, array(
+		'name'       => __( 'Profile URL', 'rli_people' ),
+		'id'         => 'profile_url',
+		'type'       => 'text_url',
+	) );
+
+	$cmb_group->add_group_field( $socail_group_field_id, array(
 		'name'        => __( 'Notes', 'rli_people' ),
 		'description' => __( 'These are for editorial purposes only and do not display on the site.', 'rli_people' ),
 		'id'          => 'notes',
