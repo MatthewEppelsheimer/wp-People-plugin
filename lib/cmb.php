@@ -424,7 +424,7 @@ function rli_people_register_details_metabox() {
 	 * Social media profiles (repeating)
 	 */
 
-	$socail_group_field_id = $cmb_group->add_field( array(
+	$social_group_field_id = $cmb_group->add_field( array(
 		'id'          => $prefix . 'social',
 		'type'        => 'group',
 		'description' => __( 'Social media profiles', 'rli_people' ),
@@ -438,13 +438,13 @@ function rli_people_register_details_metabox() {
 
 	// Group fields.
 	// The parent field's id needs to be passed as the first argument.
-	$cmb_group->add_group_field( $socail_group_field_id, array(
+	$cmb_group->add_group_field( $social_group_field_id, array(
 		'name'       => __( 'Profile URL', 'rli_people' ),
 		'id'         => 'profile_url',
 		'type'       => 'text_url',
 	) );
 
-	$cmb_group->add_group_field( $socail_group_field_id, array(
+	$cmb_group->add_group_field( $social_group_field_id, array(
 		'name'        => __( 'Notes', 'rli_people' ),
 		'description' => __( 'These are for editorial purposes only and do not display on the site.', 'rli_people' ),
 		'id'          => 'notes',
