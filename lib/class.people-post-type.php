@@ -147,14 +147,14 @@ class People_Post_Type {
 			<a href='" . get_permalink() . "'>";
 		$output .= get_the_post_thumbnail( $post->ID, $thumbnail_size, array( 'class' => "attachment-$thumbnail_size photo" ) ) . "</a> ";
 		$output .= '</div>
-			<h2><a href="' . get_permalink() . '" ><span class="person-name"> ' . $name . '</span></a></h2>
+			<h2><a href="' . get_permalink() . '" ><span class="person-name"> ' . esc_html( $name ) . '</span></a></h2>
 			<p class="person-meta">';
 			foreach ( $titles as $title ) {
-				$output .= "<span class='person-title title'>$title</span>";
+				$output .= "<span class='person-title title'>" . esc_html( $title ) . "</span>";
 			}
 			$output .= "</p><p class='person-contact'>";
 			foreach ( $emails as $email ) {
-				$output .= '<a href="mailto:' . $email . ' class="email">' . $email . '</a>';
+				$output .= '<a href="mailto:' . esc_attr( $email ) . ' class="email">' . esc_html( $email ) . '</a>';
 			}
 			$output .= '</p>
 			<div class="person-short-bio note">' . $short_bio . '</div>
