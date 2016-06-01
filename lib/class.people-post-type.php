@@ -136,21 +136,29 @@ class People_Post_Type {
 		global $post;
 		// get person info
 		$person = self::get_person();
-		
-		$bio_text = sprintf( __( 'View %s\'s full bio', 'people' ), $person['name'] ) ;
-		
+		$name = $person->get_name();
+		$titles = $person->get_titles();
+		$emails = $person->get_emails();
+		$short_bio = $person->get_short_bio();
+		$thumbnail_size = 'post-thumbnail';
+
 		$output = "<div class='pp-person'>
 			<div class='person-photo'>
-			<a href=\"" . get_permalink() . "\" alt=\"$bio_text\">";
-				
-		$size = 'post-thumbnail';
-		$output .= get_the_post_thumbnail( $post->ID, $size, array( 'class' => "attachment-$size photo" ) ) . "</a> ";
-		$output .= '</div><!-- .person-photo -->
-			<h2><a href="' . get_permalink() . "\" alt=$bio_text><span class='person-name'> " . $person['name'] . "</span></a></h2>
-			<p class='person-meta'><span class='person-title title'>" . $person['title'] . "</span></p>
-			<p class='person-contact'><a href=\"mailto:" . $person['email'] . "\" class='email'>" . $person['email'] . '</a></p>
-			<div class="person-short-bio note">' . $person['brief_bio'] . '</div>
-		</div><!-- .pp-person -->';
+			<a href='" . get_permalink() . "'>";
+		$output .= get_the_post_thumbnail( $post->ID, $thumbnail_size, array( 'class' => "attachment-$thumbnail_size photo" ) ) . "</a> ";
+		$output .= '</div>
+			<h2><a href="' . get_permalink() . '" ><span class="person-name"> ' . $name . '</span></a></h2>
+			<p class="person-meta">';
+			foreach ( $titles as $title ) {
+				$output .= "<span class='person-title title'>$title</span>";
+			}
+			$output .= "</p><p class='person-contact'>";
+			foreach ( $emails as $email ) {
+				$output .= '<a href="mailto:' . $email . ' class="email">' . $email . '</a>';
+			}
+			$output .= '</p>
+			<div class="person-short-bio note">' . $short_bio . '</div>
+		</div>';
 	return $output;
 	}
 	
