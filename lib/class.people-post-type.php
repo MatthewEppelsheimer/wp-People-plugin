@@ -159,7 +159,7 @@ class People_Post_Type {
 			$output .= '</p>
 			<div class="person-short-bio note">' . $short_bio . '</div>
 		</div>';
-	return $output;
+	return apply_filters( 'people_item_callback', $output );
 	}
 	
 	/**
