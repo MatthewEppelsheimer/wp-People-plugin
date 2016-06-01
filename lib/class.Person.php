@@ -113,6 +113,23 @@ class Person {
 	}
 
 	/**
+	 * Get the person's short bio
+	 *
+	 * Use the exerpt, falling back to truncated post content if it doesn't exist.
+	 *
+	 * @return string
+	 */
+	public function get_short_bio() {
+		$short_bio = $this->person->post->post_excerpt;
+
+		if ( empty( $short_bio ) ) {
+			$short_bio = apply_filters( 'the_excerpt', self::get_bio() );
+		}
+
+		return $short_bio;
+	}
+
+	/**
 	 * Get a person's post meta value, given a meta key
 	 *
 	 * Accepts a $short_key string to abstract post_meta prefixes from users.
