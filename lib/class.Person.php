@@ -108,6 +108,19 @@ class Person {
 	}
 
 	/**
+	 * Get the URL for the person's featured image
+	 *
+	 * @param string $size The registered image size to crop to
+	 *
+	 * @return string The thumbnail's URL
+	 */
+	public function get_thumbnail_url( $size = 'thumbnail' ) {
+		$thumbnail_url = get_the_post_thumbnail_url( $this->ID, $size );
+
+		return $thumbnail_url;
+	}
+
+	/**
 	 * Get the person's bio
 	 *
 	 * @return string The bio content
