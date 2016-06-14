@@ -260,7 +260,8 @@ class People_Post_Type {
 		$atts = shortcode_atts( 
 			array( 
 				'category' => '',
-				'orderby'  => ''
+				'orderby'  => '',
+				'class'    => '',
 			),
 			$atts,
 			'people'
