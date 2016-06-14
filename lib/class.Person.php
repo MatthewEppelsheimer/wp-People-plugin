@@ -136,16 +136,27 @@ class Person {
 	 *
 	 * Use the exerpt, falling back to truncated post content if it doesn't exist.
 	 *
+	 * @param int   $character_limit    Optional number of characters the excerpt can't exceed
+	 *
 	 * @return string
 	 */
-	public function get_short_bio() {
+	public function get_short_bio( $character_limit = 140 ) {
 		$short_bio = $this->person->post->post_excerpt;
 
 		if ( empty( $short_bio ) ) {
 			$short_bio = apply_filters( 'the_excerpt', self::get_bio() );
 		}
 
-		return $short_bio;
+		$suffix = '';
+		if ( strlen( $short_bio ) > $character_limit ) {
+			$suffix = '...';
+		}
+
+		$short_bio = substr( $short_bio, 0, $character_limit );
+
+		$output = $short_bio . $suffix;
+
+		return $output;
 	}
 
 	/**
