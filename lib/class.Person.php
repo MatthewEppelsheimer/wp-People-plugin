@@ -51,6 +51,12 @@ class Person {
 	private $phone_numbers;
 
 	/**
+	 * @var array Array of social media profiles associated with the person
+	 * Not stored during instantiation; only stored if looked up later.
+	 */
+	private $social_media_profiles;
+
+	/**
 	 * Instantiate the class
 	 *
 	 * @param int $id post ID corresponding to the People post (default: null)
@@ -201,7 +207,6 @@ class Person {
 	 * Uses private property $emails when available; otherwise sets it.
 	 *
 	 * @uses Person->get_meta()
-
 	 * @return array|bool An array of emails, or false if there are none.
 	 */
 	public function get_emails() {
@@ -234,6 +239,44 @@ class Person {
 		$this->emails = $emails;
 
 		return $emails;
+	}
+
+	/**
+	 * Get a person's social media profiles
+	 *
+	 * Uses private property $social_media_profiles when available; otherwise sets it.
+	 *
+	 * @uses Person->get_meta()
+	 * @return array|bool An array of emails, or false if there are none.
+	 */
+	public function get_social_media_profiles() {
+		if ( isset( $this->social_media_profiles ) ) {
+			return $this->social_media_profiles;
+		}
+
+		$social_media_profiles = array();
+		$profiles_group = maybe_unserialize( $this->get_meta( 'group_social', false ) );
+		$profile_items = maybe_unserialize( $profiles_group[0] );
+
+		if ( empty( $profile_items ) ) {
+			return false;
+		}
+
+		foreach ( $profile_items as $probably_serialized_item ) {
+			$item = maybe_unserialize( $probably_serialized_item );
+
+			if ( isset( $item['profile_url'] ) ) {
+				$social_media_profiles[] = esc_html( $item['profile_url'] );
+			}
+		}
+
+		if ( empty ( $social_media_profiles ) ) {
+			$social_media_profiles = false;
+		}
+
+		$this->social_media_profiles = $social_media_profiles;
+
+		return $social_media_profiles;
 	}
 
 	/**
