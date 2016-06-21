@@ -26,6 +26,7 @@ class People_Post_Type {
 		}
 		
 		self::register_shortcodes();
+		self::register_taxonomy();
 		self::register_people();
 	}
 	
@@ -46,7 +47,7 @@ class People_Post_Type {
 				'excerpt',
 				'page-attributes',
 			),
-			//'taxonomies' => array( 'post_tag', 'post_category' ),
+			'taxonomies' => array( 'people_departments' ),
 			'rewrite' =>  array(
 				'slug' => 'people'
 			),
@@ -68,6 +69,47 @@ class People_Post_Type {
 		// 'register_meta_box_cb' => array( get_class(), 'create_people_metaboxes'),
 		'menu_icon' => 'dashicons-admin-users' 
 		) );
+	}
+
+	/**
+	 * Registers custom "Department" taxonomy
+	 */
+	static function register_taxonomy() {
+
+		$labels = array(
+			'name'                       => _x( 'Departments', 'Taxonomy General Name', 'rli_testimonial' ),
+			'singular_name'              => _x( 'Department', 'Taxonomy Singular Name', 'rli_testimonial' ),
+			'menu_name'                  => __( 'Departments', 'rli_testimonial' ),
+			'all_items'                  => __( 'All Departments', 'rli_testimonial' ),
+			'parent_item'                => __( 'Parent Departments', 'rli_testimonial' ),
+			'parent_item_colon'          => __( 'Parent Departments:', 'rli_testimonial' ),
+			'new_item_name'              => __( 'New Department Name', 'rli_testimonial' ),
+			'add_new_item'               => __( 'Add New Department', 'rli_testimonial' ),
+			'edit_item'                  => __( 'Edit Department', 'rli_testimonial' ),
+			'update_item'                => __( 'Update Department', 'rli_testimonial' ),
+			'view_item'                  => __( 'View Department', 'rli_testimonial' ),
+			'separate_items_with_commas' => __( 'Separate departments with commas', 'rli_testimonial' ),
+			'add_or_remove_items'        => __( 'Add or remove Departments', 'rli_testimonial' ),
+			'choose_from_most_used'      => __( 'Choose from the most used', 'rli_testimonial' ),
+			'popular_items'              => __( 'Popular Departments', 'rli_testimonial' ),
+			'search_items'               => __( 'Search Departments', 'rli_testimonial' ),
+			'not_found'                  => __( 'Not Found', 'rli_testimonial' ),
+			'no_terms'                   => __( 'No Departments', 'rli_testimonial' ),
+			'items_list'                 => __( 'Department list', 'rli_testimonial' ),
+			'items_list_navigation'      => __( 'Department list navigation', 'rli_testimonial' ),
+		);
+
+		$args = array(
+			'labels'                     => $labels,
+			'hierarchical'               => true,
+			'public'                     => true,
+			'show_ui'                    => true,
+			'show_admin_column'          => true,
+			'show_in_nav_menus'          => true,
+			'show_tagcloud'              => true,
+		);
+
+		register_taxonomy( 'people_departments', array( 'people' ), $args );
 	}
 
 	/**
@@ -175,7 +217,7 @@ class People_Post_Type {
 		if ( empty( $args['orderby'] ) ) {
 			$args['orderby'] = 'menu_order';
 		}
-		
+
 		$people = self::query_people( $args );
 	
 		if ( $people->have_posts() ) {
@@ -259,7 +301,7 @@ class People_Post_Type {
 	static function people_shortcode( $atts ) {
 		$atts = shortcode_atts( 
 			array( 
-				'category' => '',
+				'department' => '',
 				'orderby'  => '',
 				'class'    => '',
 			),
@@ -269,9 +311,20 @@ class People_Post_Type {
 		
 		$query_args = array();
 		
-		if( $atts['category'] ) {
-			$query_args['category'] = $atts['category'];
+		if( $atts['department'] ) {
+			$query_args['tax_query'] = array(
+				array(
+					'taxonomy' => 'people_departments',
+					'terms' => $atts['department']
+				)
+			);
+			if ( is_string( $atts['department'] ) ) {
+				$query_args['tax_query'][0]['field'] = 'slug';
+ 			} else {
+				$query_args['tax_query'][0]['field'] = 'id';
+			}
 		}
+
 		if( $atts['orderby'] ) {
 			$query_args['orderby'] = $atts['orderby'];
 		}
