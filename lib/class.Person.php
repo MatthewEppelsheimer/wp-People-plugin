@@ -208,11 +208,13 @@ class Person {
 		// for some good reason, or is local logic messing w/ the data?
 		$titles_items = maybe_unserialize( $titles_group[0] );
 
-		foreach ( $titles_items as $probably_serialized_item ) {
-			$item = maybe_unserialize( $probably_serialized_item );
+		if ( ! empty( $titles_items ) ) {
+			foreach ( $titles_items as $probably_serialized_item ) {
+				$item = maybe_unserialize( $probably_serialized_item );
 
-			if ( isset( $item['title'] ) ) {
-				$titles[] = esc_html( $item['title'] );
+				if ( isset( $item['title'] ) ) {
+					$titles[] = esc_html( $item['title'] );
+				}
 			}
 		}
 
