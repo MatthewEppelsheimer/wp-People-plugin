@@ -137,6 +137,7 @@ class Person {
 	 * Use the exerpt, falling back to truncated post content if it doesn't exist.
 	 *
 	 * @param int   $character_limit    Optional number of characters the excerpt can't exceed
+	 *                                  Pass `false` for no limit
 	 *
 	 * @return string
 	 */
@@ -148,11 +149,13 @@ class Person {
 		}
 
 		$suffix = '';
-		if ( strlen( $short_bio ) > $character_limit ) {
-			$suffix = '...';
-		}
+		if ( $character_limit ) {
+			if ( strlen( $short_bio ) > $character_limit ) {
+				$suffix = '...';
+			}
 
-		$short_bio = substr( $short_bio, 0, $character_limit );
+			$short_bio = substr( $short_bio, 0, $character_limit );
+		}
 
 		$output = $short_bio . $suffix;
 
