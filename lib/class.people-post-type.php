@@ -12,31 +12,26 @@
 class People_Post_Type {
 
 	static function setup() {
-		// Wire up actions/filters
-
-		// Change 'enter title here' label in Person editor screen
-		add_filter( 'enter_title_here', 'people_title_name' );
-		
-		function people_title_name( $title ) {
-			global $post;
-			if ( 'people' == $post->post_type ) {
-		  		return __( 'Enter Name', 'people' );
-		  	}
-		  	return $title;
-		}
-		
 		self::register_shortcodes();
 		self::register_taxonomy();
 		self::register_people();
+
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
 	}
-	
+
+	/**
+	 * Setup for wp-admin
+	 */
+	static function admin_init() {
+		add_filter( 'enter_title_here', array( $this, 'title_name' ) );
+	}
+
 	/**
 	 * Register custom post type people
 	 *
 	 * @author Matthew Eppelsheimer
 	 * @since 0.2
 	 */
-
 	static function register_people() {
 		register_post_type( 'people' , array( 
 			'public' => true,
@@ -330,5 +325,19 @@ class People_Post_Type {
 		}
 		return self::list_people( apply_filters( 'people_shortcode_query_args', $query_args, $atts ), null, $atts );
 	}
-}
 
+	/**
+	 * Change the 'post title' field to "Enter Name" in the case of People
+	 * @param $title
+	 *
+	 * @return string|void
+	 */
+	static function title_name( $title ) {
+		global $post;
+		if ( 'people' == $post->post_type ) {
+			return __( 'Enter Name', 'people' );
+		}
+		return $title;
+	}
+
+}
