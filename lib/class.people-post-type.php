@@ -22,8 +22,8 @@ class People_Post_Type {
 	/**
 	 * Setup for wp-admin
 	 */
-	private function admin_init() {
-		add_filter( 'enter_title_here', array( $this, 'title_name' ) );
+	public static function admin_init() {
+		add_filter( 'enter_title_here', array( get_called_class(), 'title_name' ) );
 	}
 
 	/**
