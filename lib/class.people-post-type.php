@@ -11,18 +11,18 @@
 
 class People_Post_Type {
 
-	static function setup() {
+	public static function setup() {
 		self::register_shortcodes();
 		self::register_taxonomy();
 		self::register_people();
 
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'admin_init', array( get_called_class(), 'admin_init' ) );
 	}
 
 	/**
 	 * Setup for wp-admin
 	 */
-	static function admin_init() {
+	private function admin_init() {
 		add_filter( 'enter_title_here', array( $this, 'title_name' ) );
 	}
 
