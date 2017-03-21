@@ -167,8 +167,6 @@ class Person {
 	 *
 	 * Accepts a $short_key string to abstract post_meta prefixes from users.
 	 *
-	 * @todo regex to detect if the value is already prefixed, and handle that gracefully
-	 *
 	 * @param string $short_key The desired post_meta key value, without prefix
 	 *
 	 * @uses private var meta_prefix for post_meta key prefix
@@ -182,7 +180,21 @@ class Person {
 			return null;
 		}
 
-		$key = $this->meta_prefix . $short_key;
+		$needs_prefix = true;
+
+		// If $short_key begins with RLI_PEOPLE_PREFIX or '_',
+		// then treat it as already prefixed
+		if ( 0 === strpos( $short_key, RLI_PEOPLE_PREFIX ) ) {
+			$needs_prefix = false;
+		} elseif ( 0 === strpos( $short_key, '_' ) ) {
+			$needs_prefix = false;
+		}
+
+		if ( $needs_prefix ) {
+			$key = $this->meta_prefix . $short_key;
+		} else {
+			$key = $short_key;
+		}
 
 		if ( empty( $this->meta[$key] ) ) {
 			return false;
