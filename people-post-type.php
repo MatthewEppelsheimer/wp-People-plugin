@@ -165,7 +165,7 @@ add_action( 'admin_head-post-new.php', 'people_tinymce_excerpt_js');
  */
 if ( ! function_exists( 'people_save_meta' ) ) {
 	function people_save_meta( $post_id, $post_type, $field_id ) {
-		
+
 		// Verify if this is an auto save routine. If it is our form has not been submitted, so we dont want
 		// to do anything
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -175,8 +175,7 @@ if ( ! function_exists( 'people_save_meta' ) ) {
 		if ( ! current_user_can( 'edit_page', $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
 			return $post_id;
 		}
-		// save data in INVISIBLE custom field (note the "_" prefixing the custom fields' name
-		update_post_meta( $post_id, '_' . $field_id, $_POST[$field_id] ); 
+		update_post_meta( $post_id, '_' . RLI_PEOPLE_PREFIX . $field_id, $_POST[$field_id] );
 	}
 }
 
@@ -231,7 +230,7 @@ if ( ! function_exists( 'people_user_link' ) ) {
 	function people_user_box( $post ){
 		wp_nonce_field( 'people', 'people_user_nonce' );
 	
-		$user_id = get_post_meta( $post->ID, '_user', true );
+		$user_id = get_post_meta( $post->ID, '_' . RLI_PEOPLE_PREFIX . 'user', true );
 		wp_dropdown_users( array(
 			'show_option_none' => 'Not a User',
 			'selected' => $user_id
