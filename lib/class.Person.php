@@ -57,6 +57,12 @@ class Person {
 	private $social_media_profiles;
 
 	/**
+	 * @var object WP_User object associated with person, if any.
+	 * Not stored during instantiation; only stored if looked up later.
+	 */
+	private $user;
+
+	/**
 	 * Instantiate the class
 	 *
 	 * @param int $id post ID corresponding to the People post (default: null)
@@ -280,6 +286,26 @@ class Person {
 		$this->emails = $emails;
 
 		return $emails;
+	}
+
+	function get_user() {
+		if ( isset( $this->user ) ) {
+			return $this->user;
+		}
+
+		$user_id_array = $this->get_meta( '_' . RLI_PEOPLE_PREFIX . 'user' );
+
+		if ( $user_id_array ) {
+			$user = new WP_User( $user_id_array[0] );
+
+			$this->user = $user;
+
+			return $user;
+		}
+
+		$this->user = false;
+
+		return false;
 	}
 
 	/**
