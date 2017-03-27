@@ -20,15 +20,21 @@ Pull requests [on Github](https://github.com/rocketlift/wp-people-plugin/) are v
 
 ## Customizing Output ##
 
-### Overriding the Default Template ###
+### Preparing a custom layout template ###
 
-You can override the default HTML output for a list of People by creating a new template function and hooking it to the `people_item_callback` filter.
+Custom layout template functions should do the following:
 
-Here's an example:
+1. Call `People_Post_Type::get_person()` and store the returned value, which will be a `Person` object.
+2. Create an HTML structure template
+3. Call methods on the `Person` object within the HTML structure to insert person-specific data
+	- `get_thumbnail()` returns an image HTML element with the person's photo
+	- `get_name()` returns the person's name as a string
+	- etcetera. See the `Person` class definition in `lib/class.Person.php` for inline documentation of all template methods.
+4. Return the generated HTML string.
+
+Here is an example of a template function:
 
 ```php
-add_filter('people_item_callback', 'my_person_template' );
-
 function my_person_template() {	
 	// Get an object representing the person's data
 	$person = People_Post_Type::get_person(); 
@@ -61,4 +67,16 @@ function my_person_template() {
 	// Return generated output	
 	return $out;
 }
+```
+
+Note that by itself, this function won't do anything. See below for instructions on preparing to use a custom template as the default, or in a shortcode.
+
+### Overriding the Default Template ###
+
+You can override the default HTML output for a list of People by creating a new template function and hooking it to the `people_item_callback` filter.
+
+Here's an example that uses the `my_person_template()` example function defined above:
+
+```php
+add_filter('people_item_callback', 'my_person_template' );
 ```
