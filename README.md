@@ -73,7 +73,7 @@ Note that by itself, this function won't do anything. See below for instructions
 
 ### Overriding the Default Template ###
 
-You can override the default HTML output for a list of People by creating a new template function and hooking it to the `people_item_callback` filter.
+You can override the default HTML output for a list of People by hooking a custom template function to the `people_item_callback` filter.
 
 Here's an example that uses the `my_person_template()` example function defined above:
 
