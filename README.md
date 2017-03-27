@@ -80,3 +80,29 @@ Here's an example that uses the `my_person_template()` example function defined 
 ```php
 add_filter('people_item_callback', 'my_person_template' );
 ```
+### Registering a custom layout for use in a shortcode ##
+
+To make your 
+The `rli_people_register_template( $template_name, $template_callback_function )` function accepts two parameters:
+
+- `(string) $template_name` is a short name for referring to this layout in code
+- `(string) $template_callback_function` is a custom template function you've defined (as above) for outputting a single person during a loop. 
+
+Call this in a function that you've hooked to the `people_init` action hook, like so:
+
+```php
+function register_my_people_templates() {
+	rli_people_register_template(
+		'photo-with-full-bio', // A short name for your template
+		'my_person_template'
+	);
+}
+add_action( 'people_init', 'register_my_people_templates' );
+```
+
+This function makes your callback template available for use in content with the `[people]` shortcode's `layout` parameter, like so:
+
+`[people layout="photo-with-full-bio"]`
+
+Note that the `$template_name` parameter passed to `rli_people_register_template()` in the example above corresponds to the `layout` shortcode parameter's value. 
+
