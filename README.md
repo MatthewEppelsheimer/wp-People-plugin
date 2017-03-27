@@ -20,7 +20,9 @@ Pull requests [on Github](https://github.com/rocketlift/wp-people-plugin/) are v
 
 ## Customizing Output ##
 
-Override the default shortcode's HTML output by creating a new filter function hooked to the `people_item_callback` filter.
+### Overriding the Default Template ###
+
+You can override the default HTML output for a list of People by creating a new template function and hooking it to the `people_item_callback` filter.
 
 Here's an example:
 
@@ -28,42 +30,35 @@ Here's an example:
 add_filter('people_item_callback', 'my_people_shortcode_output' );
 
 function my_people_shortcode_output() {	
-	// register global variables
-	global $post;
-	
-	// Get an array of the person's data
+	// Get an object representing the person's data
 	$person = People_Post_Type::get_person(); 
 
 	// Set up individual variables of data
-	$thumbnail = get_the_post_thumbnail( $post->ID );
+	$thumbnail = $person->get_thumbnail();
 
-	$name = $person['name'];
+	$name = $person->get_name();
 
-	$titles = $person['title'] // an array
-	$title_html = '';
-	foreach ( $titles as $title ) {
-		$title_html .= "<span class='person-title title'>" . esc_html( $title ) . "</span>";
-	}
+	// People supports multiple title per person, so `get_titles()` returns
+	// an array. `people_render_titles()` loops over that array, rendering HTML.
+	$titles = $person->get_titles();
+	$title_html = people_render_titles( $titles );
 
-	$emails = $person['email']; // an array
-	$email_html = '';
-	foreach ( $emails as $email ) {
-		$email_html .= "<a href='mailto:" . esc_attr( $email ) . "' class='email'>" . esc_html( $email ) . "</a>";
-	}
-
-	$full_bio = $person['full_bio'];
+	// Similarly, `get_emails()` also returns an array.
+	$emails = $person->get_emails();
+	$email_html = people_render_emails( $emails );
+	
+	$full_bio = $person->get_bio();
 
 	// Generate HTML for the person
 	$out = "<div class='person'>";
 		$out .= "<div class='person-photo'>$thumbnail</div>";
 		$out .= "<h2><span class='person-name'>" . esc_html( $name ) . "</span></h2>";
-		$out .= "<p class='person-meta'>$titles_html</p>";
-		$out .= "<p class='person-contact'>$email_html</p>";
+		$out .= "<p class='person-meta'>" . esc_html( $titles_html ) . "</p>";
+		$out .= "<p class='person-contact'>" . esc_html( $email_html ) . "</p>";
 	$out .= "</div>";
 	$out .= "<div class='person-long-bio'>" . esc_html( $full_bio ) . "</div>";
 
 	// Return generated output	
 	return $out;
 }
-);
 ```
