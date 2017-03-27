@@ -27,9 +27,9 @@ You can override the default HTML output for a list of People by creating a new 
 Here's an example:
 
 ```php
-add_filter('people_item_callback', 'my_people_shortcode_output' );
+add_filter('people_item_callback', 'my_person_template' );
 
-function my_people_shortcode_output() {	
+function my_person_template() {	
 	// Get an object representing the person's data
 	$person = People_Post_Type::get_person(); 
 
