@@ -20,50 +20,89 @@ Pull requests [on Github](https://github.com/rocketlift/wp-people-plugin/) are v
 
 ## Customizing Output ##
 
-Override the default shortcode's HTML output by creating a new filter function hooked to the `people_item_callback` filter.
+### Preparing a custom layout template ###
 
-Here's an example:
+Custom layout template functions should do the following:
+
+1. Call `People_Post_Type::get_person()` and store the returned value, which will be a `Person` object.
+2. Create an HTML structure template
+3. Call methods on the `Person` object within the HTML structure to insert person-specific data
+	- `get_thumbnail()` returns an image HTML element with the person's photo
+	- `get_name()` returns the person's name as a string
+	- etcetera. See the `Person` class definition in `lib/class.Person.php` for inline documentation of all template methods.
+4. Return the generated HTML string.
+
+Here is an example of a template function:
 
 ```php
-add_filter('people_item_callback', 'my_people_shortcode_output' );
-
-function my_people_shortcode_output() {	
-	// register global variables
-	global $post;
-	
-	// Get an array of the person's data
+function my_person_template() {	
+	// Get an object representing the person's data
 	$person = People_Post_Type::get_person(); 
 
 	// Set up individual variables of data
-	$thumbnail = get_the_post_thumbnail( $post->ID );
+	$thumbnail = $person->get_thumbnail();
 
-	$name = $person['name'];
+	$name = $person->get_name();
 
-	$titles = $person['title'] // an array
-	$title_html = '';
-	foreach ( $titles as $title ) {
-		$title_html .= "<span class='person-title title'>" . esc_html( $title ) . "</span>";
-	}
+	// People supports multiple title per person, so `get_titles()` returns
+	// an array. `people_render_titles()` loops over that array, rendering HTML.
+	$titles = $person->get_titles();
+	$title_html = people_render_titles( $titles );
 
-	$emails = $person['email']; // an array
-	$email_html = '';
-	foreach ( $emails as $email ) {
-		$email_html .= "<a href='mailto:" . esc_attr( $email ) . "' class='email'>" . esc_html( $email ) . "</a>";
-	}
-
-	$full_bio = $person['full_bio'];
+	// Similarly, `get_emails()` also returns an array.
+	$emails = $person->get_emails();
+	$email_html = people_render_emails( $emails );
+	
+	$full_bio = $person->get_bio();
 
 	// Generate HTML for the person
 	$out = "<div class='person'>";
 		$out .= "<div class='person-photo'>$thumbnail</div>";
 		$out .= "<h2><span class='person-name'>" . esc_html( $name ) . "</span></h2>";
-		$out .= "<p class='person-meta'>$titles_html</p>";
-		$out .= "<p class='person-contact'>$email_html</p>";
+		$out .= "<p class='person-meta'>" . esc_html( $titles_html ) . "</p>";
+		$out .= "<p class='person-contact'>" . esc_html( $email_html ) . "</p>";
 	$out .= "</div>";
 	$out .= "<div class='person-long-bio'>" . esc_html( $full_bio ) . "</div>";
 
 	// Return generated output	
 	return $out;
 }
-);
 ```
+
+Note that by itself, this function won't do anything. See below for instructions on preparing to use a custom template as the default, or in a shortcode.
+
+### Overriding the Default Template ###
+
+You can override the default HTML output for a list of People by hooking a custom template function to the `people_item_callback` filter.
+
+Here's an example that uses the `my_person_template()` example function defined above:
+
+```php
+add_filter('people_item_callback', 'my_person_template' );
+```
+### Registering a custom layout for use in a shortcode ##
+
+To make your 
+The `rli_people_register_template( $template_name, $template_callback_function )` function accepts two parameters:
+
+- `(string) $template_name` is a short name for referring to this layout in code
+- `(string) $template_callback_function` is a custom template function you've defined (as above) for outputting a single person during a loop. 
+
+Call this in a function that you've hooked to the `people_init` action hook, like so:
+
+```php
+function register_my_people_templates() {
+	rli_people_register_template(
+		'photo-with-full-bio', // A short name for your template
+		'my_person_template'
+	);
+}
+add_action( 'rli_people_init', 'register_my_people_templates' );
+```
+
+This function makes your callback template available for use in content with the `[people]` shortcode's `layout` parameter, like so:
+
+`[people layout="photo-with-full-bio"]`
+
+Note that the `$template_name` parameter passed to `rli_people_register_template()` in the example above corresponds to the `layout` shortcode parameter's value. 
+
