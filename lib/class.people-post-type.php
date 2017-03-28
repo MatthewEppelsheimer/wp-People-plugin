@@ -10,13 +10,19 @@
  */
 
 class People_Post_Type {
-
 	public static function setup() {
+		self::init_layouts();
+
 		self::register_shortcodes();
 		self::register_taxonomy();
 		self::register_people();
 
 		add_action( 'admin_init', array( get_called_class(), 'admin_init' ) );
+
+		/**
+		 * Action hook for plugins and themes to register layouts after this plugin has initialized
+		 */
+		do_action( 'rli_people_init' );
 	}
 
 	/**
@@ -24,6 +30,17 @@ class People_Post_Type {
 	 */
 	public static function admin_init() {
 		add_filter( 'enter_title_here', array( get_called_class(), 'title_name' ) );
+	}
+
+	/**
+	 * Prepare the $rli_people global to store registered layout templates
+	 */
+	private static function init_layouts() {
+		global $rli_people;
+
+		$rli_people = new stdClass();
+
+		$rli_people->layout_templates = array();
 	}
 
 	/**
@@ -299,6 +316,7 @@ class People_Post_Type {
 				'department' => '',
 				'orderby'  => '',
 				'class'    => '',
+				'layout'   => ''
 			),
 			$atts,
 			'people'
@@ -320,10 +338,20 @@ class People_Post_Type {
 			}
 		}
 
+		$callback = null;
+
+		// Set a callback if there is a valid layout parameter
+		if ( ! empty( $atts['layout'] ) ) {
+			$layout = self::get_layout_callback( $atts['layout'] );
+			if ( $layout ) {
+				$callback = $layout;
+			}
+		}
+
 		if( $atts['orderby'] ) {
 			$query_args['orderby'] = $atts['orderby'];
 		}
-		return self::list_people( apply_filters( 'people_shortcode_query_args', $query_args, $atts ), null, $atts );
+		return self::list_people( apply_filters( 'people_shortcode_query_args', $query_args, $atts ), $callback, $atts );
 	}
 
 	/**
@@ -340,4 +368,56 @@ class People_Post_Type {
 		return $title;
 	}
 
+	/**
+	 * Register a People layout template
+	 *
+	 * This registers a callback function that renders a single person in a list
+	 * to a layout name key, storing registered layouts to the private $layout_templates
+	 * parameter.
+	 *
+	 * @uses stdClass $rli_people         Global variable for storing registered layouts
+	 *
+	 * @param string $template_name       A layout key name
+	 * @param string $template_callback   A template rendering callback function name
+	 *
+	 * @return bool|WP_Error
+	 */
+	public static function register_layout_template( $template_name, $template_callback ) {
+		global $rli_people;
+
+		if ( empty( $template_name ) OR ! is_string( $template_name ) ) {
+			return new WP_Error( 'Unable to register People layout template', "Unable to register a People layout without a valid template_name parameter.");
+		}
+
+		if ( empty( $template_callback ) OR ! is_string( $template_callback ) OR ! function_exists( $template_callback ) ) {
+			return new WP_Error( 'Unable to register People layout template', "Unable to register a People layout without a valid template_callback parameter.");
+		}
+
+		if ( isset( $rli_people->layout_templates[$template_name] ) ) {
+			return new WP_Error( 'Unable to register People layout template', "Unable to register People layout template $template_name, because a template with that name already exists." );
+		}
+
+		$rli_people->layout_templates[$template_name] = $template_callback;
+
+		return true;
+	}
+
+	/**
+	 * Retrieve callback function for a registered layout
+	 *
+	 * @param string $layout    A registered layout key
+	 *
+	 * @return string|bool      A layout callback function name, or false if none
+	 *                          match the given $layout key
+	 */
+	private static function get_layout_callback( $layout ) {
+		global $rli_people;
+
+		if ( isset( $rli_people->layout_templates[$layout] ) ) {
+			$callback = $rli_people->layout_templates[$layout];
+			return $callback;
+		}
+
+		return false;
+	}
 }

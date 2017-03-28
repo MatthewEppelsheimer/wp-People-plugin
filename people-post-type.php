@@ -128,6 +128,15 @@ if ( ! function_exists( 'people_render_single_person' ) ) {
 	}
 }
 
+/**
+ * Register a person layout callback
+ */
+if ( ! function_exists( 'people_register_layout_template' ) ) {
+	function people_register_layout_template( $template_name, $template_callback ) {
+		return People_Post_Type::register_layout_template( $template_name, $template_callback );
+	}
+}
+
 /*************** Utility Functions *********************/
 
 /*

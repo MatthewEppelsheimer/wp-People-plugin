@@ -97,7 +97,7 @@ function register_my_people_templates() {
 		'my_person_template'
 	);
 }
-add_action( 'people_init', 'register_my_people_templates' );
+add_action( 'rli_people_init', 'register_my_people_templates' );
 ```
 
 This function makes your callback template available for use in content with the `[people]` shortcode's `layout` parameter, like so:
